@@ -12,9 +12,10 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('Tarefas', {
       id: {
-        type: Sequelize.UUIDV4,
         defaultValue: DataTypes.UUIDV4,
+        allowNull: false,
         primaryKey: true,
+        type: Sequelize.UUIDV4
       },
       descricao: {
         type: Sequelize.STRING
