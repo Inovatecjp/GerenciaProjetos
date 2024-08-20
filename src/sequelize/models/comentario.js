@@ -14,7 +14,15 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   comentario.init({
-    texto: DataTypes.STRING
+    id: DataTypes.UUIDV4,
+    texto: DataTypes.STRING,
+    tarefa_user_id:{
+      type: DataTypes.UUIDV4,
+      references:{
+        model: 'Tarefa_Usuario',
+        key: 'id'
+      }
+    }
   }, {
     sequelize,
     modelName: 'comentario',
