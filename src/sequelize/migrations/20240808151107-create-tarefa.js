@@ -2,10 +2,6 @@
 
 const { DataTypes } = require('sequelize');
 
-const STATUS = {
-  em_andamento: '0',
-  finalizado: '1',
-}
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
@@ -17,34 +13,32 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.UUIDV4
       },
-      descricao: {
+      title: {
         type: Sequelize.STRING
       },
-      data_inicio: {
-        type: Sequelize.DATE
+      descricao: {
+        type: Sequelize.STRING
       },
       data_fim: {
         type: Sequelize.DATE
       },
-      status: {
-        type: Sequelize.ENUM,
-        values: Object.values(STATUS)
-      },
-      createdAt: {
-        allowNull: false,
-        type: Sequelize.DATE
-      },
-      projeto_id: {
+      categoria_id: {
         type: Sequelize.UUIDV4,
         references: {
-          model: 'Projeto',
+          model: 'Categoria',
           key: 'id'
         },
         allowNull: false
       },
+      createdAt: {
+        allowNull: false,
+        type: Sequelize.DATE,
+        defaultValue: new Date()
+      },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: new Date()
       }
     });
   },

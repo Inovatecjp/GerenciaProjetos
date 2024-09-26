@@ -4,8 +4,8 @@ const {
 } = require('sequelize');
 
 STATUS = {
-  em_andamento: '0',
-  finalizado: '1',
+  contratado: 0,
+  desativado: 1,
 }
 
 module.exports = (sequelize, DataTypes) => {
@@ -29,14 +29,18 @@ module.exports = (sequelize, DataTypes) => {
       values: Object.values(STATUS)
     },
     email: DataTypes.STRING,
+    hashed_password: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
   }, {
     sequelize,
     modelName: 'User',
   });
 
   User.associate = models => {
-    User.hasMany(models.Tarefa, { foreignKey: 'user_id', as: 'user_id' });
-    User.hasMany(models.Projeto_Usuario, { foreignKey: 'user_id', as: 'user_id' });
+    User.belongsTo(models.Profile, {foreignKey: 'profile_id'})
+    User.hasMany(models.Projeto_Usuario, { foreignKey: 'user_id' });
   }
 
   return User;

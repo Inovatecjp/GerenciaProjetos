@@ -1,33 +1,32 @@
-// 'use strict';
-// const {
-//   Model
-// } = require('sequelize');
-// module.exports = (sequelize, DataTypes) => {
-//   class endereco extends Model {
-//     /**
-//      * Helper method for defining associations.
-//      * This method is not a part of Sequelize lifecycle.
-//      * The `models/index` file will call this method automatically.
-//      */
-//     static associate(models) {
-//       // define association here
-//     }
-//   }
-//   endereco.init({
-//     id: DataTypes.UUIDV4,
-//     rua: DataTypes.STRING,
-//     cep: DataTypes.STRING,
-//     bairro: DataTypes.STRING,
-//     uf: DataTypes.STRING,
-//     complemento: DataTypes.STRING,
+'use strict';
+const {
+  Model
+} = require('sequelize');
+module.exports = (sequelize, DataTypes) => {
+  class Endereco extends Model {
+    /**
+     * Helper method for defining associations.
+     * This method is not a part of Sequelize lifecycle.
+     * The `models/index` file will call this method automatically.
+     */
+    static associate(models) {
+      // define association here
+    }
+  }
+  Endereco.init({
+    id: DataTypes.UUIDV4,
+    rua: DataTypes.STRING,
+    cep: DataTypes.STRING,
+    bairro: DataTypes.STRING,
+    uf: DataTypes.STRING,
+    complemento: DataTypes.STRING, 
+  }, {
+    sequelize,
+    modelName: 'Endereco',
+  });
 
-//   }, {
-//     sequelize,
-//     modelName: 'endereco',
-//   });
-
-//   endereco.associate = models => {
-//     endereco.belongsTo(models.User, { foreignKey: 'user_id', as: 'user' });
-//   }
-//   return endereco;
-// };
+  Endereco.associate = models => {
+    Endereco.belongsTo(models.User, { foreignKey: 'user_id'});
+  }
+  return Endereco;
+};

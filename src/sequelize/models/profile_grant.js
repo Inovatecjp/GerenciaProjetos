@@ -3,7 +3,7 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class profile_grant extends Model {
+  class Profile_Grant extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -13,11 +13,22 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
   }
-  profile_grant.init({
-    nome: DataTypes.STRING
+  Profile_Grant.init({
+    id:DataTypes.UUIDV4,
+    nome: DataTypes.STRING,
+    status: DataTypes.STRING,
+    user_id: DataTypes.UUIDV4,
+    profile_id: DataTypes.UUIDV4,
   }, {
     sequelize,
-    modelName: 'profile_grant',
+    modelName: 'Profile_Grant',
   });
-  return profile_grant;
+
+
+  Profile_Grant.associate = models => {
+    Profile_Grant.belongsTo(models.Grands, { foreignKey: 'grands_id' });
+    Profile_Grant.belongsTo(models.Profile, { foreignKey: 'profile_id'});
+  }
+
+  return Profile_Grant;
 };

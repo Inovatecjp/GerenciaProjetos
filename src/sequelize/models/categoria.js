@@ -2,9 +2,10 @@
 const {
   Model
 } = require('sequelize');
-const tarefa = require('./tarefa');
+
+
 module.exports = (sequelize, DataTypes) => {
-  class Tarefa_Usuario extends Model {
+  class Categoria extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -14,19 +15,19 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
   }
-  Tarefa_Usuario.init({
+  Categoria.init({
     id: DataTypes.UUIDV4,
-    user_id: DataTypes.UUIDV4,
-    tarefa_id: DataTypes.UUIDV4
+    projeto_id: DataTypes.UUIDV4,
+    title: DataTypes.STRING,  
   }, {
     sequelize,
-    modelName: 'Tarefa_Usuario',
+    modelName: 'Categoria',
   });
 
-Tarefa_Usuario.associate = models => {
-  Tarefa_Usuario.belongsTo(models.User, {foreignKey: 'user_id'})
-  Tarefa_Usuario.belongsTo(models.Tarefa, {foreignKey: 'tarefa_id'})
+Categoria.associate = models => {
+    Categoria.belongsTo(models.Projeto, { foreignKey: 'projeto_id'});
+    Categoria.hasMany(models.Tarefa, { foreignKey: 'categoria_id'});
 }
-
-  return Tarefa_Usuario;
+  
+  return Categoria;
 };

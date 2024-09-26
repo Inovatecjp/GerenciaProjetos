@@ -4,8 +4,8 @@ const {
 } = require('sequelize');
 
 const STATUS = {
-  em_andamento: '0',
-  finalizado: '1',
+  contratado: 1,
+  desativado: 2,
 }
 
 module.exports = (sequelize, DataTypes) => {
@@ -20,7 +20,6 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Projeto_Usuario.init({
-    id: DataTypes.UUIDV4,
     funcao: DataTypes.STRING,
     data_inicio: DataTypes.DATE,
     data_fim: DataTypes.DATE,
@@ -29,30 +28,9 @@ module.exports = (sequelize, DataTypes) => {
       values: Object.values(STATUS)
     },
     salario: DataTypes.NUMBER,
-    projeto_id: {
-      type: DataTypes.UUIDV4,
-      references: {
-        model: 'Projeto',
-        key: 'id'
-      },
-      allowNull: false
-    },
-    user_id: {
-      type: DataTypes.UUIDV4,
-      references:{
-        model: 'User',
-        key: 'id'
-      },
-      allowNull: false
-    },
-    profile_id: {
-      type: DataTypes.UUIDV4,
-      references:{
-        model: 'Profile',
-        key: 'id'
-      },
-      allowNull: false
-    },
+    projeto_id: DataTypes.UUIDV4,
+    user_id: DataTypes.UUIDV4,
+    profile_id: DataTypes.UUIDV4,
   }, {
     sequelize,
     modelName: 'Projeto_Usuario',
@@ -60,9 +38,11 @@ module.exports = (sequelize, DataTypes) => {
 
 
   Projeto_Usuario.associate = models => {
-    Projeto_Usuario.belongsTo(models.User, { foreignKey: 'user_id', as: 'user' });
-    Projeto_Usuario.belongsTo(models.Project, { foreignKey: 'projeto_id', as: 'projeto' });
-    Projeto_Usuario.belongsTo(models.Profile, { foreignKey: 'profile_id', as: 'profile' });
+    Projeto_Usuario.belongsTo(models.User, { foreignKey: 'user_id'});
+    Projeto_Usuario.belongsTo(models.Project, { foreignKey: 'projeto_id' });
+    Projeto_Usuario.belongsTo(models.Profile, { foreignKey: 'profile_id' });
+    Projeto_Usuario.hasMany(models.Tarefa, {foreignKey: 'responsavel_id', as: 'responsavel_projeto_usuario'})
+    Projeto_Usuario.hasMany(models.Tarefa_Usuario, {foreignKey:'user_id', as: 'user_tarefa_usuario'})
   }
 
 return Projeto_Usuario;

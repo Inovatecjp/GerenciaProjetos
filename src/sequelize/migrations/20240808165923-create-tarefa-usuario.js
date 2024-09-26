@@ -2,7 +2,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Tarefa_Usuarios', {
+    await queryInterface.createTable('Tarefa_Usuario', {
       id: {
         defaultValue: DataTypes.UUIDV4,
         allowNull: false,
@@ -27,15 +27,17 @@ module.exports = {
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: new Date()
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: new Date()
       }
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Tarefa_Usuarios');
+    await queryInterface.dropTable('Tarefa_Usuario');
   }
 };

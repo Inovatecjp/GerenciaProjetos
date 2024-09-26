@@ -5,10 +5,11 @@ const {
 } = require('sequelize');
 
 const STATUS = {
-  em_andamento: '0',
-  hiato: '1',
-  finalizado: '2',
-  cancelado: '3'
+  nao_iniciado: 1,
+  em_andamento: 2,
+  finalizado: 3,
+  paralisado: 4,
+  cancelado: 5
 }
 
 module.exports = (sequelize, DataTypes) => {
@@ -43,8 +44,8 @@ module.exports = (sequelize, DataTypes) => {
   })
 
   Projeto.associate = models => {
-    Projeto.hasMany(models.Tarefa, { foreignKey: 'projeto_id', as: 'projeto_id' });
-    Projeto.hasMany(models.Projeto_Usuario, { foreignKey: 'projeto_id', as: 'projeto_id' });
+    Projeto.hasMany(models.Categoria, { foreignKey: 'projeto_id', as: 'categoria' });
+    Projeto.hasMany(models.Projeto_Usuario, { foreignKey: 'projeto_id', as: 'projeto_usuario' });
   }
 
   return Projeto;

@@ -1,8 +1,8 @@
 'use strict';
 
-const STATUS = {
-  em_andamento: '0',
-  finalizado: '1',
+STATUS = {
+  contratado: 0,
+  desativado: 1,
 }
 
 /** @type {import('sequelize-cli').Migration} */
@@ -25,7 +25,7 @@ module.exports = {
       },
       profile_id: {
         type: Sequelize.DataTypes.UUID,
-        references: { model: 'profiles', key: 'id' }
+        references: { model: 'Profiles', key: 'id' }
       },
       telefone: {
         type: Sequelize.STRING,

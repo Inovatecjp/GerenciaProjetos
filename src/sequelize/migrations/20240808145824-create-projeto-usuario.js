@@ -3,14 +3,14 @@
 const { DataTypes } = require('sequelize');
 
 const STATUS = {
-  em_andamento: '0',
-  finalizado: '1',
+  contratado: 1,
+  desativado: 2,
 }
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Projeto_Usuarios', {
+    await queryInterface.createTable('Projeto_Usuario', {
       funcao: {
         type: Sequelize.STRING,
         allowNull: false
@@ -37,7 +37,6 @@ module.exports = {
           model: 'Projeto',
           key: 'id'
         },        
-        primaryKey: true,
         allowNull: false
       },
       user_id: {
@@ -46,7 +45,6 @@ module.exports = {
           model: 'User',
           key: 'id'
         },
-        primaryKey: true,
         allowNull: false
       },
       profile_id: {
@@ -59,15 +57,19 @@ module.exports = {
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: new Date()
+
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: new Date()
+
       }
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Projeto_Usuarios');
+    await queryInterface.dropTable('Projeto_Usuario');
   }
 };

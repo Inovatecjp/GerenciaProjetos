@@ -3,7 +3,7 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class grands extends Model {
+  class Grands extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -13,11 +13,25 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
   }
-  grands.init({
-    nome: DataTypes.STRING
+  Grands.init({
+    id:     {
+      type: DataTypes.UUID,
+      allowNull: false,
+      primaryKey: true,
+      defaultValue: DataTypes.UUIDV1
+  },       
+  grant:          { type: DataTypes.STRING, allowNull: true },
+  
+  note:           { type: DataTypes.TEXT, allowNull: true },
+  filterableRoute:{ type: DataTypes.STRING, allowNull: true, },
+  route:          { type: DataTypes.STRING, allowNull: false }
   }, {
     sequelize,
-    modelName: 'grands',
+    modelName: 'Grands',
   });
-  return grands;
+
+  Grands.associate = models => {
+    Grands.hasMany(models.profile_grant, { foreignKey: 'grands_id'});
+  }
+  return Grands;
 };

@@ -1,11 +1,13 @@
 'use strict';
 
 const STATUS = {
-  em_andamento: '0',
-  hiato: '1',
-  finalizado: '2',
-  cancelado: '3'
+  nao_iniciado: 1,
+  em_andamento: 2,
+  finalizado: 3,
+  paralisado: 4,
+  cancelado: 5
 }
+
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
@@ -38,11 +40,15 @@ module.exports = {
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: new Date()
+
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: new Date()
+
       }
     });
   },
