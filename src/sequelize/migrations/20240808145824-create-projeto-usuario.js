@@ -45,7 +45,9 @@ module.exports = {
           model: 'User',
           key: 'id'
         },
-        allowNull: false
+        allowNull: false,
+        primaryKey: true
+
       },
       profile_id: {
         type: Sequelize.UUIDV4,

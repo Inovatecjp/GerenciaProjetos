@@ -1,4 +1,5 @@
 'use strict';
+const { DataTypes } = require('sequelize');
 
 const STATUS = {
   nao_iniciado: 1,

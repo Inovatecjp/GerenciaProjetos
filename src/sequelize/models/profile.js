@@ -21,7 +21,6 @@ module.exports = (sequelize, DataTypes) => {
     },
     name:         { type: DataTypes.STRING, allowNull: true },
     description:  { type: DataTypes.TEXT, allowNull: false, unique: true },
-    isAdmin:      { type: DataTypes.BOOLEAN, allowNull: false, default: false }  }, {
     sequelize,
     modelName: 'Profile',
   });

@@ -20,10 +20,8 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       defaultValue: DataTypes.UUIDV1
   },       
-  grant:          { type: DataTypes.STRING, allowNull: true },
-  
-  note:           { type: DataTypes.TEXT, allowNull: true },
-  filterableRoute:{ type: DataTypes.STRING, allowNull: true, },
+  description: {type: DataTypes.STRING},
+  method: {type: DataTypes.STRING, allowNull: false},
   route:          { type: DataTypes.STRING, allowNull: false }
   }, {
     sequelize,

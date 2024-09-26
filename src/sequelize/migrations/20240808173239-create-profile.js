@@ -13,7 +13,6 @@ module.exports = {
           type: Sequelize.DataTypes.STRING, allowNull: false
         },
         description:  { type: Sequelize.DataTypes.TEXT, allowNull: false, unique: true },
-        is_admin:     { type: Sequelize.DataTypes.BOOLEAN, allowNull: false, default: false },
         updated_at:   { type: Sequelize.DataTypes.DATE, allowNull: false },
         created_at:   { type: Sequelize.DataTypes.DATE, allowNull: false }
       });

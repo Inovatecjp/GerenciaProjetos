@@ -1,31 +1,36 @@
-'use strict';
 const {
   Model,
 } = require('sequelize');
-
 const STATUS = {
   contratado: 1,
   desativado: 2,
 }
 
-module.exports = (sequelize, DataTypes) => {
+module.exports =  (sequelize, DataTypes) => {
   class Projeto_Usuario extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate(models) {
-      // define association here
+      Projeto_Usuario.belongsTo(models.User, {
+        foreignKey: 'user_id',
+        as: 'usuario'
+      });
+      Projeto_Usuario.belongsTo(models.Projeto, {
+        foreignKey: 'projeto_id',
+        as: 'projeto'
+      });
+      Projeto_Usuario.belongsTo(models.Profile, {
+        foreignKey: 'profile_id',
+        as: 'profile'
+      });
     }
   }
+
   Projeto_Usuario.init({
     funcao: DataTypes.STRING,
     data_inicio: DataTypes.DATE,
     data_fim: DataTypes.DATE,
-    status:{
-      type: DataTypes.STRING,
-      values: Object.values(STATUS)
+    status: {
+      type: DataTypes.ENUM,
+      values: Object.values(STATUS),
     },
     salario: DataTypes.NUMBER,
     projeto_id: DataTypes.UUIDV4,

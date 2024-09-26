@@ -1,9 +1,6 @@
-'use strict';
 const {
   Model,
-  UUIDV4
 } = require('sequelize');
-
 const STATUS = {
   nao_iniciado: 1,
   em_andamento: 2,
@@ -11,27 +8,30 @@ const STATUS = {
   paralisado: 4,
   cancelado: 5
 }
-
-module.exports = (sequelize, DataTypes) => {
+module.exports =  (sequelize, DataTypes) => {
   class Projeto extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate(models) {
-      // define association here
+      Projeto.belongsToMany(models.User, {
+        through: models.Projeto_Usuario,
+        foreignKey: 'projeto_id',
+        as: 'usuarios'
+      });
+      Projeto.hasMany(models.Projeto_Usuario, {
+        foreignKey: 'projeto_id',
+        as: 'projetosUsuario'
+      });
     }
   }
+
   Projeto.init({
     id: {
-      type: DataTypes.UUIDV4,
+      type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
-      primaryKey: true
+      primaryKey: true,
     },
     name: DataTypes.STRING,
     descricao: DataTypes.STRING,
-    orcamento: DataTypes.NUMBER,
+    orcamento: DataTypes.DECIMAL,
     data_inicio: DataTypes.DATE,
     data_fim: DataTypes.DATE,
     status: {

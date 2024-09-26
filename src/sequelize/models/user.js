@@ -1,7 +1,5 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+const { Model, DataTypes } = require('sequelize');
 
 STATUS = {
   contratado: 0,
@@ -19,14 +17,19 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
   }
+
   User.init({
-    id: DataTypes.UUIDV4,
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true, // Mark id as the primary key
+    },
     name: DataTypes.STRING,
     cpf: DataTypes.STRING,
-    telefone: DataTypes.STRING,
+    phone: DataTypes.STRING,
     status: {
       type: DataTypes.ENUM,
-      values: Object.values(STATUS)
+      values: Object.values(STATUS),
     },
     email: DataTypes.STRING,
     hashed_password: {

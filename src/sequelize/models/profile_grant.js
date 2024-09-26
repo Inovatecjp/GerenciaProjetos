@@ -15,9 +15,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   Profile_Grant.init({
     id:DataTypes.UUIDV4,
-    nome: DataTypes.STRING,
-    status: DataTypes.STRING,
-    user_id: DataTypes.UUIDV4,
+    grands_id: DataTypes.UUIDV4,
     profile_id: DataTypes.UUIDV4,
   }, {
     sequelize,
