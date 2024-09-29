@@ -4,13 +4,17 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('comentarios', {
       id: {
-        defaultValue: DataTypes.UUIDV4,
+        defaultValue: Sequelize.UUIDV4,
         allowNull: false,
         primaryKey: true,
         type: Sequelize.UUIDV4
       },
       texto: {
         type: Sequelize.STRING
+      },
+      tarefa_user_id: {
+        type: Sequelize.DataTypes.UUID,
+        references: { model: 'Tarefa_Usuario', key: 'id' }
       },
       createdAt: {
         allowNull: false,

@@ -1,35 +1,31 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+const { Model } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class Grands extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate(models) {
-      // define association here
+      // Definir as associações corretamente
+      Grands.hasMany(models.ProfileGrant, { foreignKey: 'grant_id' });
     }
   }
+
   Grands.init({
-    id:     {
+    id: {
       type: DataTypes.UUID,
       allowNull: false,
       primaryKey: true,
       defaultValue: DataTypes.UUIDV1
-  },       
-  description: {type: DataTypes.STRING},
-  method: {type: DataTypes.STRING, allowNull: false},
-  route:          { type: DataTypes.STRING, allowNull: false }
+    },
+    description: { type: DataTypes.STRING },
+    method: { type: DataTypes.STRING, allowNull: false },
+    route: { type: DataTypes.STRING, allowNull: false }
   }, {
     sequelize,
     modelName: 'Grands',
+    tableName: 'grants',
+    underscored: true
+
   });
 
-  Grands.associate = models => {
-    Grands.hasMany(models.profile_grant, { foreignKey: 'grands_id'});
-  }
   return Grands;
 };

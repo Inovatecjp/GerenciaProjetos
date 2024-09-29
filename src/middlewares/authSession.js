@@ -1,60 +1,69 @@
-const { Model } = require('sequelize');
-const Profile_Grant = require('../services/ProfileGrantService');
-const authMiddleware = require('./auth');
+const db = require('../sequelize/models/index');
 
+const Profile_Grant = db.ProfileGrant
 class AuthMiddleware {
   isAuthenticated() {
-    return async(req, res, next) => {
-
-      if (req.session.userId) {
+    return (req, res, next) => {
+      if (req.session.user?.id) {
         return next();
       }
       return res.status(401).json({ error: 'Not authenticated' });
-    }
+    };
   }
 
-  async hasPermission() {
+  hasPermission() {
     return async (req, res, next) => {
+      const { profileId } = req.session.user;
 
-      const { profileId } = req.session;
-      
       if (!profileId) {
         return res.status(401).json({ error: 'Profile not found in session' });
       }
-      
-      const route = req.baseUrl;
-      const method = req.method;
-      
+
+      if (req.session.permissions) {
+        const hasPermission = req.session.permissions.some(permission =>
+          permission.route === req.baseUrl && permission.method === req.method
+        );
+
+        if (hasPermission) {
+          return next();
+        }
+
+        return res.status(403).json({ error: 'Forbidden: insufficient permissions' });
+      }
+
       try {
-        const hasPermission = await Profile_Grant.findOne({
-          where: {
-            profile_id: profileId,
-          },
-          attributes: ['id'], 
+        const permissions = await Profile_Grant.findAll({
+          where: { profile_id: profileId },
           include: [
             {
               model: Grands,
-              where : {
-                route : route,
-                method: method
-              },
-              required: true
+              required: true,
+              attributes: ['route', 'method']
             }
           ]
         });
-        
+
+        req.session.permissions = permissions.map(p => ({
+          route: p.Grand.route,
+          method: p.Grand.method
+        }));
+
+        const hasPermission = req.session.permissions.some(permission =>
+          permission.route === req.baseUrl && permission.method === req.method
+        );
+
         if (!hasPermission) {
           return res.status(403).json({ error: 'Forbidden: insufficient permissions' });
         }
-        
+
         return next();
       } catch (error) {
         return res.status(500).json({ error: 'Internal server error' });
       }
-    }
+    };
   }
 }
 
-const AuthMiddleware = new AuthMiddleware();
+const authMiddlewareInstance = new AuthMiddleware();
 
-module.exports = authMiddleware  
+module.exports = authMiddlewareInstance;

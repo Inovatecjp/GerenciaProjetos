@@ -1,7 +1,7 @@
 'use strict';
 const { DataTypes } = require('sequelize');
 
-STATUS = {
+const STATUS = {
   contratado: 0,
   desativado: 1,
 }
@@ -28,7 +28,7 @@ module.exports = {
         type: Sequelize.DataTypes.UUID,
         references: { model: 'Profiles', key: 'id' }
       },
-      telefone: {
+      phone: {
         type: Sequelize.STRING,
         allowNull: true
       },
@@ -44,6 +44,11 @@ module.exports = {
       hashed_password: {
         type: Sequelize.STRING,
         allowNull: false,
+      },
+      date_birth :{
+        type: Sequelize.DATE,
+        allowNull: false,
+        defaultValue: new Date()
       },
       createdAt: {
         type: Sequelize.DATE,

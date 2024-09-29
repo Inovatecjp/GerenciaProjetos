@@ -1,8 +1,5 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
-
+const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
   class Categoria extends Model {
@@ -12,22 +9,36 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      // Definir associações com outros modelos
+      Categoria.belongsTo(models.Projeto, { foreignKey: 'projeto_id', as: 'projeto' });
+      Categoria.hasMany(models.Tarefa, { foreignKey: 'categoria_id', as: 'tarefas' });
     }
   }
-  Categoria.init({
-    id: DataTypes.UUIDV4,
-    projeto_id: DataTypes.UUIDV4,
-    title: DataTypes.STRING,  
-  }, {
-    sequelize,
-    modelName: 'Categoria',
-  });
 
-Categoria.associate = models => {
-    Categoria.belongsTo(models.Projeto, { foreignKey: 'projeto_id'});
-    Categoria.hasMany(models.Tarefa, { foreignKey: 'categoria_id'});
-}
-  
+  Categoria.init(
+    {
+      id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true,
+        allowNull: false,
+      },
+      projeto_id: {
+        type: DataTypes.UUID,
+        allowNull: false,
+      },
+      title: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+    },
+    {
+      sequelize,
+      modelName: 'Categoria',
+      tableName: 'Categorias', // opcional: define o nome da tabela explicitamente
+      timestamps: true, // ativa campos createdAt e updatedAt
+    }
+  );
+
   return Categoria;
 };

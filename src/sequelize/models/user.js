@@ -1,7 +1,7 @@
 'use strict';
 const { Model, DataTypes } = require('sequelize');
 
-STATUS = {
+const STATUS = {
   contratado: 0,
   desativado: 1,
 }

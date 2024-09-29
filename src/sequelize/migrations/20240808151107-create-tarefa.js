@@ -30,6 +30,14 @@ module.exports = {
         },
         allowNull: false
       },
+      responsavel_id: {
+        type: Sequelize.UUIDV4,
+        references: {
+          model: 'users',
+          key: 'id'
+        },
+        allowNull: false
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

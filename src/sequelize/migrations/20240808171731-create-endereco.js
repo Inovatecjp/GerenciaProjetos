@@ -37,10 +37,10 @@ module.exports = {
         type: Sequelize.DATE,
         defaultValue: new Date()
       },
-      user: {
+      user_id: {
         type: Sequelize.UUIDV4,
         references: {
-          model: 'Users',
+          model: 'users',
           key: 'id'
         },
         allowNull: false

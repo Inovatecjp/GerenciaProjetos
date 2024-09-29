@@ -28,22 +28,25 @@ const modelFiles = fs
       file.indexOf('.test.js') === -1
     );
   });
-
-for (const file of modelFiles) {
-  const model = require(path.join(__dirname, file));
-  if (typeof model !== 'function') {
-    throw new Error(`O modelo importado de ${file} não está exportando uma função como default.`);
+  for (const file of modelFiles) {
+    const model = require(path.join(__dirname, file));
+    if (typeof model !== 'function') {
+      throw new Error(`O modelo importado de ${file} não está exportando uma função como default.`);
+    }
+    const initializedModel = model(sequelize, Sequelize.DataTypes);
+    db[initializedModel.name] = initializedModel;
+    console.log(initializedModel.name);
   }
-  const initializedModel = model(sequelize, Sequelize.DataTypes);
-  db[initializedModel.name] = initializedModel;
-}
+  
 
-Object.keys(db).forEach(modelName => {
-  if (db[modelName].associate) {
-    db[modelName].associate(db);
-  }
-});
-
+  Object.keys(db).forEach(modelName => {
+    console.log(`Inicializando associações para o modelo: ${modelName}`);
+    console.log('Conteúdo do modelo:', db[modelName]);
+    if (db[modelName].associate) {
+      console.log(`Associando ${modelName}`);
+      db[modelName].associate(db);
+    }
+  });
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 

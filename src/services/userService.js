@@ -5,14 +5,15 @@ const { v4: uuidv4 } = require('uuid');
 const { profile, error } = require('console');
 const HttpError = require("../utils/customError/httpError");
 require('dotenv').config();
+const profileService = require("../services/profileService");
 
-
+const bcrypt = require('bcrypt'); // Import bcrypt
 const createUser = async (body) => {
     try {
 
-        if(mess.length>0){
-            throw new Error(error.mess)
-        }
+        // if(mess.length>0){
+        //     throw new Error(error.mess)
+        // }
 
         const hashedPassword = await bcrypt.hash(body.password, 10)
 
@@ -24,6 +25,7 @@ const createUser = async (body) => {
             date_birth: body.date_birth,
             phone: body.phone,
             cpf: body.cpf,
+            profile_id:(await profileService.getProfileComun()).id,
             status: 0
         })
 
@@ -39,20 +41,20 @@ const createUser = async (body) => {
 }
 
 const authenticate = async (body) => {
-    const user = await this.getEmail(body.email)
-
+    const user = await getEmail(body.email)
     if (!user) {
         console.error("Usuário não encontrado")
         throw new Error('Usuário inválido')
-
+        
     }
     const isPasswordValid = await bcrypt.compare(body.password, user.hashed_password);
     if (!isPasswordValid) {
         throw new Error("Usuário inválido")
     }
-
-    const token = jwt.sign({ id: user.id, email: user.email});
-    return token;
+    
+    const token = jwt.sign({ id: user.id, email: user.email,profileId:user.profile_id});
+    console.log(token)
+    return {token, user:{ id: user.id, email: user.email, name: user.name,profileId:user.profile_id}};
 }
 
 

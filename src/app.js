@@ -13,6 +13,11 @@ const whiteList = ['http://localhost:3000'];
 const tarefasRouter = require('./routes/tarefasRouter.js')
 const userRouter = require('./routes/userRouter.js')
 const projetoUsuarioRouter = require('./routes/projetoUsuarioRouter.js');
+const categoriasRoutes = require('./routes/categoriasRoutes.js');
+const comentariosRoutes = require('./routes/comentariosRoutes.js');
+const enderecoRoutes = require('./routes/enderecoRoutes.js');
+const projetosRoutes = require('./routes/projetosRoutes.js');
+const profileRoutes = require("./routes/profileRoutes");
 
 const corsOptions = {
   origin: function (origin, callback) {
@@ -25,7 +30,7 @@ const corsOptions = {
 };
 
 let redisClient = createClient({
-  // url: "redis://localhost:6379"
+  url: "redis://localhost:6379"
 })
 redisClient.connect().catch(console.error)
 
@@ -66,6 +71,13 @@ class App {
     this.app.use("/tarefas", tarefasRouter);
     this.app.use("/users", userRouter);
     this.app.use("/projeto-usuario", projetoUsuarioRouter);
+    this.app.use("/categorias", categoriasRoutes);
+    this.app.use("/comentarios", comentariosRoutes);
+    this.app.use("/enderecos", enderecoRoutes);
+    this.app.use("/projetos", projetosRoutes);
+  
+    this.app.use("/profiles", profileRoutes);
+  
   }
 
   errorHandling() {

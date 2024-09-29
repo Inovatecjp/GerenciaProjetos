@@ -42,7 +42,7 @@ module.exports = {
       user_id: {
         type: Sequelize.UUIDV4,
         references:{
-          model: 'User',
+          model: 'users',
           key: 'id'
         },
         allowNull: false,

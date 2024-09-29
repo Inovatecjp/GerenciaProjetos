@@ -1,7 +1,7 @@
 const jwt = require('../../config/jwt');
 const db = require('../sequelize/models/index')
 const Grant = db.grant
-const ProfileGrant = db.profile_grant
+const ProfileGrant = db.ProfileGrant
 
 
 
@@ -83,7 +83,8 @@ const authMiddleware = async (req, res, next) =>{
         const profileGrants = await ProfileGrant.findAll({
             include: {
                 model: Grant,
-                attributes: ["route", "filterableRoute"]
+                attributes: ["route", "filterableRoute"],
+                required: true,
             },
             where: {profileId: userInfo.profile_id},
         });

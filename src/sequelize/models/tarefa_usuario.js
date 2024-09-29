@@ -1,8 +1,6 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
-const tarefa = require('./tarefa');
+const { Model } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class Tarefa_Usuario extends Model {
     /**
@@ -11,22 +9,36 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      // Define associações
+      Tarefa_Usuario.belongsTo(models.User, { foreignKey: 'user_id', as: 'user' });
+      Tarefa_Usuario.belongsTo(models.Tarefa, { foreignKey: 'tarefa_id', as: 'tarefa' });
     }
   }
-  Tarefa_Usuario.init({
-    id: DataTypes.UUIDV4,
-    user_id: DataTypes.UUIDV4,
-    tarefa_id: DataTypes.UUIDV4
-  }, {
-    sequelize,
-    modelName: 'Tarefa_Usuario',
-  });
 
-Tarefa_Usuario.associate = models => {
-  Tarefa_Usuario.belongsTo(models.User, {foreignKey: 'user_id'})
-  Tarefa_Usuario.belongsTo(models.Tarefa, {foreignKey: 'tarefa_id'})
-}
+  Tarefa_Usuario.init(
+    {
+      id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true,
+        allowNull: false,
+      },
+      user_id: {
+        type: DataTypes.UUID,
+        allowNull: false,
+      },
+      tarefa_id: {
+        type: DataTypes.UUID,
+        allowNull: false,
+      },
+    },
+    {
+      sequelize,
+      modelName: 'Tarefa_Usuario',
+      tableName: 'Tarefas_Usuarios', // Define o nome da tabela explicitamente
+      timestamps: true, // Ativa campos createdAt e updatedAt
+    }
+  );
 
   return Tarefa_Usuario;
 };

@@ -43,7 +43,7 @@ const get = async (req, res) => {
 
 const getAll = async (req, res) => {
     try {
-        const tarefas = await tarefasService.getAllTarefa();
+        const tarefas = await tarefasService.getAllTarefas();
         res.status(200).json({ data: tarefas, message: "Lista de tarefas obtida com sucesso" });
     } catch (error) {
         console.error('Erro ao obter lista de tarefas:', error.message);

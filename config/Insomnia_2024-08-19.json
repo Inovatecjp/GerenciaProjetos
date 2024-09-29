@@ -1,0 +1,279 @@
+{
+    "_type": "export",
+    "__export_format": 4,
+    "__export_date": "2024-08-19T09:29:15.049Z",
+    "__export_source": "insomnia.desktop.app:v9.3.3",
+    "resources": [
+      {
+        "_id": "wrk_1234567890",
+        "parentId": null,
+        "modified": 1722312214210,
+        "created": 1722312214211,
+        "name": "Project Management API",
+        "description": "",
+        "scope": "collection",
+        "_type": "workspace"
+      },
+      {
+        "_id": "env_0987654321",
+        "parentId": "wrk_1234567890",
+        "modified": 1722312214213,
+        "created": 1722312214213,
+        "name": "Base Environment",
+        "data": {
+          "baseURL": "http://localhost:3000/api",
+          "token": "<your_token_here>"
+        },
+        "dataPropertyOrder": {
+          "&": ["baseURL", "token"]
+        },
+        "color": null,
+        "isPrivate": false,
+        "_type": "environment"
+      },
+      {
+        "_id": "jar_1234567890",
+        "parentId": "wrk_1234567890",
+        "modified": 1722312214214,
+        "created": 1722312214214,
+        "name": "Default Jar",
+        "cookies": [],
+        "_type": "cookie_jar"
+      },
+      {
+        "_id": "fld_projeto",
+        "parentId": "wrk_1234567890",
+        "modified": 1722312214215,
+        "created": 1722312214215,
+        "name": "Projetos",
+        "description": "",
+        "_type": "request_group"
+      },
+      {
+        "_id": "req_projeto_get_all",
+        "parentId": "fld_projeto",
+        "modified": 1722312214216,
+        "created": 1722312214216,
+        "url": "{{ baseURL }}/projetos",
+        "name": "Get All Projects",
+        "method": "GET",
+        "headers": [
+          {
+            "name": "Authorization",
+            "value": "Bearer {{ token }}"
+          },
+          {
+            "name": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "_type": "request"
+      },
+      {
+        "_id": "req_projeto_create",
+        "parentId": "fld_projeto",
+        "modified": 1722312214217,
+        "created": 1722312214217,
+        "url": "{{ baseURL }}/projetos",
+        "name": "Create Project",
+        "method": "POST",
+        "headers": [
+          {
+            "name": "Authorization",
+            "value": "Bearer {{ token }}"
+          },
+          {
+            "name": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mimeType": "application/json",
+          "text": "{\n  \"name\": \"Novo Projeto\",\n  \"descricao\": \"Descrição do projeto\",\n  \"orcamento\": 1000,\n  \"data_inicio\": \"2024-09-01T00:00:00Z\",\n  \"data_fim\": \"2024-12-31T00:00:00Z\",\n  \"status\": \"nao_iniciado\"\n}"
+        },
+        "_type": "request"
+      },
+      {
+        "_id": "req_projeto_get_one",
+        "parentId": "fld_projeto",
+        "modified": 1722312214218,
+        "created": 1722312214218,
+        "url": "{{ baseURL }}/projetos/:id",
+        "name": "Get Project by ID",
+        "method": "GET",
+        "headers": [
+          {
+            "name": "Authorization",
+            "value": "Bearer {{ token }}"
+          },
+          {
+            "name": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "_type": "request"
+      },
+      {
+        "_id": "req_projeto_update",
+        "parentId": "fld_projeto",
+        "modified": 1722312214219,
+        "created": 1722312214219,
+        "url": "{{ baseURL }}/projetos/:id",
+        "name": "Update Project",
+        "method": "PUT",
+        "headers": [
+          {
+            "name": "Authorization",
+            "value": "Bearer {{ token }}"
+          },
+          {
+            "name": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mimeType": "application/json",
+          "text": "{\n  \"name\": \"Projeto Atualizado\",\n  \"descricao\": \"Nova descrição\",\n  \"status\": \"em_andamento\"\n}"
+        },
+        "_type": "request"
+      },
+      {
+        "_id": "req_projeto_delete",
+        "parentId": "fld_projeto",
+        "modified": 1722312214220,
+        "created": 1722312214220,
+        "url": "{{ baseURL }}/projetos/:id",
+        "name": "Delete Project",
+        "method": "DELETE",
+        "headers": [
+          {
+            "name": "Authorization",
+            "value": "Bearer {{ token }}"
+          },
+          {
+            "name": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "_type": "request"
+      },
+      {
+        "_id": "fld_categoria",
+        "parentId": "wrk_1234567890",
+        "modified": 1722312214221,
+        "created": 1722312214221,
+        "name": "Categorias",
+        "description": "",
+        "_type": "request_group"
+      },
+      {
+        "_id": "req_categoria_get_all",
+        "parentId": "fld_categoria",
+        "modified": 1722312214222,
+        "created": 1722312214222,
+        "url": "{{ baseURL }}/categorias",
+        "name": "Get All Categories",
+        "method": "GET",
+        "headers": [
+          {
+            "name": "Authorization",
+            "value": "Bearer {{ token }}"
+          },
+          {
+            "name": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "_type": "request"
+      },
+      {
+        "_id": "req_categoria_create",
+        "parentId": "fld_categoria",
+        "modified": 1722312214223,
+        "created": 1722312214223,
+        "url": "{{ baseURL }}/categorias",
+        "name": "Create Category",
+        "method": "POST",
+        "headers": [
+          {
+            "name": "Authorization",
+            "value": "Bearer {{ token }}"
+          },
+          {
+            "name": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mimeType": "application/json",
+          "text": "{\n  \"title\": \"Nova Categoria\",\n  \"projeto_id\": \"<projeto_id>\"\n}"
+        },
+        "_type": "request"
+      },
+      {
+        "_id": "req_categoria_get_one",
+        "parentId": "fld_categoria",
+        "modified": 1722312214224,
+        "created": 1722312214224,
+        "url": "{{ baseURL }}/categorias/:id",
+        "name": "Get Category by ID",
+        "method": "GET",
+        "headers": [
+          {
+            "name": "Authorization",
+            "value": "Bearer {{ token }}"
+          },
+          {
+            "name": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "_type": "request"
+      },
+      {
+        "_id": "req_categoria_update",
+        "parentId": "fld_categoria",
+        "modified": 1722312214225,
+        "created": 1722312214225,
+        "url": "{{ baseURL }}/categorias/:id",
+        "name": "Update Category",
+        "method": "PUT",
+        "headers": [
+          {
+            "name": "Authorization",
+            "value": "Bearer {{ token }}"
+          },
+          {
+            "name": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mimeType": "application/json",
+          "text": "{\n  \"title\": \"Categoria Atualizada\"\n}"
+        },
+        "_type": "request"
+      },
+      {
+        "_id": "req_categoria_delete",
+        "parentId": "fld_categoria",
+        "modified": 1722312214226,
+        "created": 1722312214226,
+        "url": "{{ baseURL }}/categorias/:id",
+        "name": "Delete Category",
+        "method": "DELETE",
+        "headers": [
+          {
+            "name": "Authorization",
+            "value": "Bearer {{ token }}"
+          },
+          {
+            "name": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "_type": "request"
+      }
+    ]
+  }
+  
