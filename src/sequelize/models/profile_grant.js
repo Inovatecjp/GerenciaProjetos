@@ -5,7 +5,7 @@ const { Model, DataTypes } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class ProfileGrant extends Model {
     static associate(models) {
-      ProfileGrant.belongsTo(models.Profile, { as: 'profiles', foreignKey: 'profile_id' });
+      ProfileGrant.belongsTo(models.Profile, { as: 'profile', foreignKey: 'profile_id' });
       ProfileGrant.belongsTo(models.Grands, { as: 'grant', foreignKey: 'grant_id' });
             }
   }

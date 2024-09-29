@@ -51,13 +51,12 @@ const authenticate = async (req, res) => {
     try {
         const  {token,user}  = await usersService.authenticate(req.body);
         req.session.userId = user.id;
-  
         // Opcionalmente, armazene outras informações
         req.session.user = {
           id: user.id,
           name: user.name,
           email: user.email,
-          profileId:user.profile_id
+          profileId:user.profileId
         };
         res.status(200).json({ token, message: 'Login bem-sucedido' });
     } catch (error) {

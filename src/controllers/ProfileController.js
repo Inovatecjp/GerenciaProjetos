@@ -26,17 +26,42 @@ class profileController {
       })
       const profil = created ? profiles : profiles;
       const routes = await Grands.bulkCreate([
-        { method: 'GET', route: '/users/', description: 'acesso as infos do proprio user' },
+        { method: 'GET', route: '/users', description: 'acesso as infos do proprio user' },
         { method: 'GET', route: '/users/me', description: 'acesso as infos do proprio user' },
-        { method: 'POST', route: '/users/', description: 'acesso as infos do proprio user' },
-        { method: 'UPDADE', route: '/users/', description: 'acesso as infos do proprio user' },
-        { method: 'DELETE', route: '/users/', description: 'pegar o plano do user' },
+        { method: 'POST', route: '/users', description: 'acesso as infos do proprio user' },
+        { method: 'UPDADE', route: '/users', description: 'acesso as infos do proprio user' },
+        { method: 'DELETE', route: '/users', description: 'pegar o plano do user' },
 
-        { method: 'GET', route: '/projetos/', description: 'acesso as infos do proprio user' },
+        { method: 'GET', route: '/projetos', description: 'acesso as infos do proprio user' },
         { method: 'GET', route: '/projetos/:id', description: 'acesso as infos do proprio user' },
-        { method: 'POST', route: '/projetos/', description: 'acesso as infos do proprio user' },
+        { method: 'POST', route: '/projetos', description: 'acesso as infos do proprio user' },
         { method: 'UPDADE', route: '/projetos/:id', description: 'acesso as infos do proprio user' },
         { method: 'DELETE', route: '/projetos/:id', description: 'pegar o plano do user' },
+        
+        
+        { method: 'GET', route: '/categorias', description: 'acesso as infos do proprio user' },
+        { method: 'GET', route: '/categorias/:id', description: 'acesso as infos do proprio user' },
+        { method: 'POST', route: '/categorias', description: 'acesso as infos do proprio user' },
+        { method: 'UPDADE', route: '/categorias/:id', description: 'acesso as infos do proprio user' },
+        { method: 'DELETE', route: '/categorias/:id', description: 'pegar o plano do user' },
+
+        { method: 'GET', route: '/tarefas', description: 'acesso as infos do proprio user' },
+        { method: 'GET', route: '/tarefas/:id', description: 'acesso as infos do proprio user' },
+        { method: 'POST', route: '/tarefas', description: 'acesso as infos do proprio user' },
+        { method: 'UPDADE', route: '/tarefas/:id', description: 'acesso as infos do proprio user' },
+        { method: 'DELETE', route: '/tarefas/:id', description: 'pegar o plano do user' },
+
+        { method: 'GET', route: '/comentarios', description: 'acesso as infos do proprio user' },
+        { method: 'GET', route: '/comentarios/:id', description: 'acesso as infos do proprio user' },
+        { method: 'POST', route: '/comentarios', description: 'acesso as infos do proprio user' },
+        { method: 'UPDADE', route: '/comentarios/:id', description: 'acesso as infos do proprio user' },
+        { method: 'DELETE', route: '/comentarios/:id', description: 'pegar o plano do user' },
+
+        { method: 'GET', route: '/enderecos', description: 'acesso as infos do proprio user' },
+        { method: 'GET', route: '/enderecos/:id', description: 'acesso as infos do proprio user' },
+        { method: 'POST', route: '/enderecos', description: 'acesso as infos do proprio user' },
+        { method: 'UPDADE', route: '/enderecos/:id', description: 'acesso as infos do proprio user' },
+        { method: 'DELETE', route: '/enderecos/:id', description: 'pegar o plano do user' },
 
         
       ]);
@@ -113,7 +138,7 @@ class profileController {
     
 
     const newlints = routes.map(grand =>{
-      return { profiles_id : profil.id , grant_id:grand.id  }
+      return { profile_id : profil.id , grant_id:grand.id  }
     })
     
     try {
