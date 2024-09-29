@@ -26,10 +26,7 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'responsavel_id',
         as: 'responsavel_projeto_usuario',
       });
-      Projeto_Usuario.hasMany(models.Tarefa_Usuario, {
-        foreignKey: 'user_id',
-        as: 'user_tarefa_usuario',
-      });
+
     }
   }
 
@@ -72,7 +69,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       sequelize,
       modelName: 'Projeto_Usuario',
-      tableName: 'Projetos_Usuarios', // Define o nome da tabela explicitamente
+      tableName: 'Projeto_Usuario', // Define o nome da tabela explicitamente
       timestamps: true, // Ativa campos createdAt e updatedAt
     }
   );

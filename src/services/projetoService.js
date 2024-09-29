@@ -89,6 +89,26 @@ const updateProjeto = async (id, body) => {
     throw err;
   }
 };
+let instance = null; // Define instance at the top of the file or function
+
+const getProjetoFist = async () => {
+  try {
+    if (!instance) {
+      const Projetos = (await Projeto.findAll())[0]; // Await the query and access the first result
+
+      if (!Projetos) {
+        throw new Error('Perfil não encontrado');
+      }
+
+      instance = Projetos; // Save the fetched object in the instance
+    }
+
+    return instance;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 
 const projetoService = {
   createProjeto,
@@ -96,6 +116,7 @@ const projetoService = {
   getAllProjetos,
   getProjeto,
   updateProjeto,
+  getProjetoFist
 };
 
 module.exports = projetoService;

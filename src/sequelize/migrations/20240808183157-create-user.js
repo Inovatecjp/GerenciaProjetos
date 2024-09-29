@@ -26,7 +26,7 @@ module.exports = {
       },
       profile_id: {
         type: Sequelize.DataTypes.UUID,
-        references: { model: 'Profiles', key: 'id' }
+        references: { model: 'profiles', key: 'id' }
       },
       phone: {
         type: Sequelize.STRING,

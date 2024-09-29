@@ -35,7 +35,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       sequelize,
       modelName: 'Tarefa_Usuario',
-      tableName: 'Tarefas_Usuarios', // Define o nome da tabela explicitamente
+      tableName: 'Tarefa_Usuario', // Define o nome da tabela explicitamente
       timestamps: true, // Ativa campos createdAt e updatedAt
     }
   );

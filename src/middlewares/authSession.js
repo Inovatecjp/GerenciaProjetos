@@ -20,15 +20,35 @@ class AuthMiddleware {
         return res.status(401).json({ error: 'Profile not found in session' });
       }
 
-      if (req.session.permissions) {
+      if (Array.isArray(req.session.permissions) && req.session.permissions.length !== 0) {
+        const uuidRegex = /(\{){0,1}[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}(\}){0,1}/
+        const matches = req.path.match(uuidRegex)
+        const uuid = matches && matches.length >= 1 && matches[0];
+        console.log(req.path)
+        console.log(req.baseUrl+req.path)
+        const urloring = req.path === '/' ? req.baseUrl : req.baseUrl + req.path;
         const hasPermission = req.session.permissions.some(permission =>
-         permission.route === req.baseUrl+'/' && permission.method === req.method
+          {
+            // console.log("+=-=-=-=-=-=-=-=-=-=-")
+            // console.log(permission.route.replace(':id', uuid))
+            // console.log("----------------")
+            // console.log("----------------")
+            // console.log(permission.route.replace(':id', uuid) === urloring)
+            // console.log(permission.method === req.method)
+            // console.log(permission.method ,'  ', req.method)
+            // console.log(permission.route.replace(':id', uuid) ,"-----",urloring)
+            // console.log("----------------")
+            // console.log("+++++++++++++")
+
+            return permission.route.replace(':id', uuid) === urloring && permission.method === req.method}
         );
+;
         if (hasPermission) {
+          console.log("PASSOU")
           return next();
         }
 
-        return res.status(403).json({ error: 'Forbidden: insufficient permissions' });
+        return res.status(403).json({ error: 'Sem permissão' });
       }
       
       try {

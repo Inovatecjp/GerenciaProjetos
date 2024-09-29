@@ -22,7 +22,9 @@ const update = async (req, res) => {
 
 const deleteUser = async (req, res) => {
     try {
-        await usersService.deleteUser(req.params.id);
+        const userId = req.params.id || req.userInfo.id;
+
+        await usersService.deleteUser(userId);
         res.status(200).json({ data: 'Usuário deletado com sucesso' });
     } catch (error) {
         res.status(500).json({ error: error.message });

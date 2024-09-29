@@ -11,6 +11,12 @@ const STATUS = {
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('Projeto_Usuario', {
+      id: {
+        defaultValue: DataTypes.UUIDV4,
+        allowNull: false,
+        primaryKey: true,
+        type: Sequelize.UUIDV4
+      },
       funcao: {
         type: Sequelize.STRING,
         allowNull: false
@@ -34,7 +40,7 @@ module.exports = {
       projeto_id: {
         type: Sequelize.UUIDV4,
         references: {
-          model: 'Projeto',
+          model: 'Projetos',
           key: 'id'
         },        
         allowNull: false
@@ -52,7 +58,7 @@ module.exports = {
       profile_id: {
         type: Sequelize.UUIDV4,
         references:{
-          model: 'Profile',
+          model: 'profiles',
           key: 'id'
         },
         allowNull: false

@@ -35,13 +35,11 @@ const modelFiles = fs
     }
     const initializedModel = model(sequelize, Sequelize.DataTypes);
     db[initializedModel.name] = initializedModel;
-    console.log(initializedModel.name);
   }
   
 
   Object.keys(db).forEach(modelName => {
-    console.log(`Inicializando associações para o modelo: ${modelName}`);
-    console.log('Conteúdo do modelo:', db[modelName]);
+
     if (db[modelName].associate) {
       console.log(`Associando ${modelName}`);
       db[modelName].associate(db);

@@ -47,6 +47,7 @@ const getAllComentarios = async () => {
     const comentarios = await Comentario.findAll();
     return comentarios;
   } catch (err) {
+    console.log(err)
     console.error('Erro ao obter todos os comentários:', err.message);
     throw err;
   }

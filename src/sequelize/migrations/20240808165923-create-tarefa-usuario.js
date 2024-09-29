@@ -20,7 +20,7 @@ module.exports = {
       tarefa_id: {
         type: Sequelize.UUIDV4,
         references: {
-          model: 'Projeto',
+          model: 'Tarefas',
           key: 'id'
         },
         allowNull: false

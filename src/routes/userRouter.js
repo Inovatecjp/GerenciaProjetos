@@ -5,21 +5,26 @@ const userController = require('../controllers/userController');
 const AuthMiddleware = require('../middlewares/authSession');
 
 const router = Router();
-
-// Rota para criar um novo usuário
+//gercia de user ADminGerencte de sistema
+  // Rota para criar um novo usuário
 router.post('/', userController.create);
-
-// Rota para atualizar um usuário
+  //  Rota para atualizar um usuário
 router.put('/:id', AuthMiddleware.isAuthenticated(), userController.update);
-
-// Rota para deletar um usuário
+  // Rota para deletar um usuário
 router.delete('/:id', AuthMiddleware.isAuthenticated(), userController.delete);
-
-// Rota para obter todos os usuários
+  // Rota para obter todos os usuários
 router.get('/', userController.getAll);
+
+
+
+
+
 
 // Rota para obter um usuário sem a senha
 router.get('/me', AuthMiddleware.isAuthenticated(), userController.getUserWithoutPassword);
+router.put('/me', AuthMiddleware.isAuthenticated(), userController.update);
+router.delete('/me', AuthMiddleware.isAuthenticated(), userController.delete);
+
 
 // Rota para autenticar um usuário 
 router.post('/authenticate', userController.authenticate);

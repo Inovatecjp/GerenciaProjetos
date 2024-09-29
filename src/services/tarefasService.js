@@ -7,6 +7,7 @@ const Tarefa = db.Tarefa;
 // Função para criar uma nova tarefa
 const create = async (body) => {
     try {
+        console.log(body)
         const novaTarefa = await Tarefa.create({
             id: uuidv4(),
             descricao: body.descricao,
@@ -15,12 +16,13 @@ const create = async (body) => {
             title: body.title,
             projeto_id: body.projeto_id,
             responsavel_id: body.responsavel_id,
+            categoria_id:body.categoria_id,
             status: 0,
         });
 
         return { novaTarefa };
     } catch (err) {
-        console.error('Erro ao criar tarefa:', err.message);
+        console.error('Erro ao criar tarefa:', err);
         throw new HttpError(404, "Não foi possível criar a tarefa");
     }
 };

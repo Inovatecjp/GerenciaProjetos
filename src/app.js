@@ -18,7 +18,7 @@ const comentariosRoutes = require('./routes/comentariosRoutes.js');
 const enderecoRoutes = require('./routes/enderecoRoutes.js');
 const projetosRoutes = require('./routes/projetosRoutes.js');
 const profileRoutes = require("./routes/profileRoutes");
-
+const tarefaUsuarioRoutes = require('./routes/tarefaUsuarioRoutes');
 const corsOptions = {
   origin: function (origin, callback) {
     if (whiteList.indexOf(origin) !== -1 || !origin) {
@@ -75,7 +75,9 @@ class App {
     this.app.use("/comentarios", comentariosRoutes);
     this.app.use("/enderecos", enderecoRoutes);
     this.app.use("/projetos", projetosRoutes);
-  
+    this.app.use('/tarefaUsuario', tarefaUsuarioRoutes);
+    
+    
     this.app.use("/profiles", profileRoutes);
   
   }

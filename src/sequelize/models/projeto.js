@@ -16,9 +16,15 @@ module.exports =  (sequelize, DataTypes) => {
         foreignKey: 'projeto_id',
         as: 'usuarios'
       });
+  
       Projeto.hasMany(models.Projeto_Usuario, {
         foreignKey: 'projeto_id',
-        as: 'projetosUsuario'
+        as: 'projeto_usuario'
+      });
+  
+      Projeto.hasMany(models.Categoria, {
+        foreignKey: 'projeto_id',
+        as: 'categoria'
       });
     }
   }
@@ -43,10 +49,6 @@ module.exports =  (sequelize, DataTypes) => {
     modelName: 'Projeto',
   })
 
-  Projeto.associate = models => {
-    Projeto.hasMany(models.Categoria, { foreignKey: 'projeto_id', as: 'categoria' });
-    Projeto.hasMany(models.Projeto_Usuario, { foreignKey: 'projeto_id', as: 'projeto_usuario' });
-  }
 
   return Projeto;
 };

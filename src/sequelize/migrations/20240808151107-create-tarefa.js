@@ -25,7 +25,7 @@ module.exports = {
       categoria_id: {
         type: Sequelize.UUIDV4,
         references: {
-          model: 'Categoria',
+          model: 'Categorias',
           key: 'id'
         },
         allowNull: false
