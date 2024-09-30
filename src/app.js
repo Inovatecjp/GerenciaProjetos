@@ -77,8 +77,7 @@ class App {
     this.app.use("/projetos", projetosRoutes);
     this.app.use('/tarefaUsuario', tarefaUsuarioRoutes);
     this.app.use('/projetoprofile', tarefaUsuarioRoutes);
-    
-    
+       
     this.app.use("/profiles", profileRoutes);
   
   }

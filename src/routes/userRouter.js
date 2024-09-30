@@ -9,35 +9,35 @@ const router = Router();
   // Rota para criar um novo usuário
 router.post('/', userController.create);
   //  Rota para atualizar um usuário
-router.put('/:id', AuthMiddleware.isAuthenticated(), userController.update);
   // Rota para deletar um usuário
-router.delete('/:id', AuthMiddleware.isAuthenticated(), userController.delete);
   // Rota para obter todos os usuários
-
   
-  // Rota para obter um usuário sem a senha
-router.get('/me', AuthMiddleware.isAuthenticated(), userController.getUserWithoutPassword);
-router.put('/me', AuthMiddleware.isAuthenticated(), userController.update);
-router.delete('/me', AuthMiddleware.isAuthenticated(), userController.delete);
-router.get('/me/profile', AuthMiddleware.isAuthenticated(), userController.myprofile);
-router.get('/me/projetos', AuthMiddleware.isAuthenticated(), userController.myProjetos);
+  
+  // Rota para obter um usuário sem a senha o id é o id do user
+router.get('/me/:id',  userController.getUserWithoutPassword);
+router.put('/me/:id',  userController.update);
+router.delete('/me/:id',  userController.delete);
+router.get('/me/:id/profile',  userController.myprofile);
+router.get('/me/:id/projetos',  userController.myProjetos);
 
 //extras
-  router.get('/projetos/:id', userController.participantesPorProjeto); /// todos os partipantes do pojeto 
-  router.get('/:id', userController.getUserWithoutPassword);/// pegar apenas um user 
+router.get('/projetos/:id', userController.participantesPorProjeto); /// todos os partipantes do pojeto 
+router.get('/:id', userController.getUserWithoutPassword);/// pegar apenas um user 
 
 
+router.put('/:id',  userController.update);
 
+router.delete('/:id',  userController.delete);
 
 
 
 
 // Rota para autenticar um usuário 
 router.post('/authenticate', userController.authenticate);
-router.post('/perfilprojeto',AuthMiddleware.isAuthenticated(), userController.perfilprojeto);
+router.post('/perfilprojeto/:id', userController.perfilprojeto);
 
 
-router.post('/logout', AuthMiddleware.isAuthenticated(), (req, res) => {
+router.post('/logout',  (req, res) => {
     // Verificar se há uma sessão ativa
     if (!req.session.userId) {
       return res.status(400).json({ error: 'Nenhuma sessão ativa encontrada.' });

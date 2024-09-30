@@ -6,6 +6,7 @@ const db = require ('../sequelize/models/index')
 const Profile = db.Profile
 const Profile_Grant = db.ProfileGrant
 const Grands = db.Grands
+const User = db.User
 const create = async (req, res) => {
     try {
         const user = await usersService.createUser(req.body);
@@ -77,7 +78,7 @@ const authenticate = async (req, res) => {
 
 const myProjetos = async (req, res) => {
     try {
-        const  projetos  = await projetoUsuarioService.getAssignmentByIdUsers(req.session.userId);
+        const  projetos  = await projetoUsuarioService.getAssignmentByIdUsers(req.params.id||req.session.user?.id||req.userInfo.id);
 
         res.status(200).json({ projetos, message: 'Login bem-sucedido' });
     } catch (error) {
@@ -87,27 +88,15 @@ const myProjetos = async (req, res) => {
 const myprofile = async (req, res) => {
     try {
         // Certifique-se de que a sessão existe e que possui userId
-        if (!req.session.user) {
-            return res.status(400).json({ message: 'User session is required' });
-        }
-
-        // Exibe informações da sessão
-        console.log(req.session.user);
-
-        // Busca os perfis usando profileId e profile_Projeto_id (permite que o segundo seja undefined)
-        const profileIds = [req.session.user.profileId, req.session.user.profile_Projeto_id].filter(Boolean); // Remove null/undefined
-
+        const user = await User.findByPk(req.params.id)
         // Busca os perfis com base nos IDs válidos
-        const perfis = await Promise.all(profileIds.map(async (id) => {
-            return await Profile.findByPk(id);
-        }));
+        const perfis = await Profile.findByPk(user.profile_id);
+    
 
-        console.log(profileIds);
+        console.log(perfis);
 
         // Busca todos os grants relacionados a esses perfis e combina-os em um único array
-        const allGrants = await Promise.all(perfis.map(async (info) => {
-            
-            const grants = await Profile_Grant.findAll({
+        const allGrants =  await Profile_Grant.findAll({
                 where: { profile_id: info.id },
                 include: [
                     {
@@ -119,14 +108,12 @@ const myprofile = async (req, res) => {
                 ]
             });
 
-            return grants;
-        }));
+    
 
         // Combina todos os grants em um único array
-        const combinedGrants = allGrants.flat(); // Usamos flat() para achatar a lista de grants
 
         // Retorna a resposta com perfis e todos os grants combinados em um único array
-        res.status(200).json({ perfis, grants: combinedGrants, message: 'Login bem-sucedido' });
+        res.status(200).json({ perfis, grants: allGrants, message: 'Login bem-sucedido' });
     } catch (error) {
         // Resposta de erro com o código apropriado e mensagem
         res.status(500).json({ error: error.message });

@@ -6,10 +6,10 @@ const AuthMiddleware = require('../middlewares/authSession.js'); // Caso precise
 const router = Router();
 
 // Rotas para operações CRUD de Categoria
-router.post('/', AuthMiddleware.hasPermission(), categoriaController.create); // Criar categoria
-router.get('/',AuthMiddleware.hasPermission(), categoriaController.getAll); // Listar todas as categorias
-router.get('/:id',AuthMiddleware.hasPermission(), categoriaController.get); // Obter uma categoria específica por ID
-router.put('/:id', AuthMiddleware.hasPermission(), categoriaController.update); // Atualizar categoria
-router.delete('/:id', AuthMiddleware.hasPermission(), categoriaController.remove); // Deletar categoria
+router.post('/',  categoriaController.create); // Criar categoria
+router.get('/', categoriaController.getAll); // Listar todas as categorias
+router.get('/:id', categoriaController.get); // Obter uma categoria específica por ID
+router.put('/:id',  categoriaController.update); // Atualizar categoria
+router.delete('/:id',  categoriaController.remove); // Deletar categoria
 
 module.exports = router;

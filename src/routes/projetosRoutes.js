@@ -8,7 +8,7 @@ const AuthMiddleware = require('../middlewares/authSession.js'); // Caso precise
 const router = Router();
 
 // Rotas para operações de CRUD de Projeto
-router.post('/', AuthMiddleware.hasPermission(true), projetoController.create); // Criar projeto
+router.post('/',  projetoController.create); // Criar projeto
 router.get('/', projetoController.getAll); // Listar todos os projetos
 
 
@@ -23,7 +23,7 @@ router.get('/:projetoId/usuarios/sem-tarefa', gerenteProjetoController.getUsuari
 
 
 router.get('/:id', projetoController.get); // Obter um projeto específico por ID
-router.put('/:id', AuthMiddleware.hasPermission(), projetoController.update); // Atualizar projeto
-router.delete('/:id', AuthMiddleware.hasPermission(), projetoController.remove); // Deletar projeto
+router.put('/:id', projetoController.update); // Atualizar projeto
+router.delete('/:id', projetoController.remove); // Deletar projeto
 
 module.exports = router;

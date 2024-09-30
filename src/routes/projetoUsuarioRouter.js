@@ -6,10 +6,10 @@ const authMiddleware = require('../middlewares/authSession');
 
 const router = Router();
 
-router.post('/', authMiddleware.hasPermission(), projetoUsuarioController.assignUser);
-router.get('/', authMiddleware.hasPermission(), projetoUsuarioController.getAll);
-router.get('/:id', authMiddleware.hasPermission(), projetoUsuarioController.getByProjetoId);
-router.put('/:id', authMiddleware.hasPermission(), projetoUsuarioController.update);
-router.delete('/:id', authMiddleware.hasPermission(), projetoUsuarioController.delete);
+router.post('/:id',  projetoUsuarioController.assignUser);
+router.get('/',  projetoUsuarioController.getAll);
+router.get('/:idprojeto/:id',  projetoUsuarioController.getByProjetoId);//vai pegar o mes
+router.put('/:id',  projetoUsuarioController.update);
+router.delete('/:id',  projetoUsuarioController.delete);
 
 module.exports = router;

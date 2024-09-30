@@ -6,10 +6,10 @@ const AuthMiddleware = require('../middlewares/auth'); // Caso precise de autent
 const router = Router();
 
 // Rotas para operações CRUD de Endereço
-router.post('/', AuthMiddleware, enderecoController.create); // Criar endereço
+router.post('/', enderecoController.create); // Criar endereço
 router.get('/', enderecoController.getAll); // Listar todos os endereços
 router.get('/:id', enderecoController.get); // Obter um endereço específico por ID
-router.put('/:id', AuthMiddleware, enderecoController.update); // Atualizar endereço
-router.delete('/:id', AuthMiddleware, enderecoController.remove); // Deletar endereço
+router.put('/:id', enderecoController.update); // Atualizar endereço
+router.delete('/:id', enderecoController.remove); // Deletar endereço
 
 module.exports = router;
