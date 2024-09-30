@@ -1,8 +1,14 @@
 const { v4: uuidv4 } = require('uuid');
 const HttpError = require("../utils/customError/httpError");
 const db = require('../sequelize/models/index');
+const { where } = require('sequelize');
 
 const Projeto = db.Projeto;
+const Categoria = db.Categoria;
+const Tarefa = db.Tarefa;
+const Comentario = db.Comentario;
+const Projeto_Usuario = db.Projeto_Usuario;
+const Tarefa_Usuario = db.Tarefa_Usuario;
 
 // Função para criar um novo projeto
 const createProjeto = async (body) => {
@@ -108,7 +114,159 @@ const getProjetoFist = async () => {
     throw new Error(error.message);
   }
 };
+const getProjetoFilter = async (id) => {
+  try {
+    // Fetch the project by ID
+    const projeto = await Projeto.findByPk(id);
+    if (!projeto) {
+      throw new Error('Projeto não encontrado');
+    }
 
+    // Fetch all categories related to the project
+    const categorias = await Categoria.findAll({
+      where: { projeto_id: id },
+    });
+
+    // Fetch all tasks for each category and construct the project structure
+    const categoriesWithTasks = await Promise.all(
+      categorias.map(async (categoria) => {
+        // Fetch tasks associated with the current category
+        const tarefas = await Tarefa.findAll({
+          where: { categoria_id: categoria.id },
+        });
+
+        // Map tasks to the desired structure
+        const tasksWithDetails = await Promise.all(
+          tarefas.map(async (tarefa) => {
+            // Fetch Tarefa_Usuario records associated with the task
+            const tarefaUsuarios = await Tarefa_Usuario.findAll({
+              where: { tarefa_id: tarefa.id },
+            });
+
+            // Fetch comments for each tarefaUsuario
+            const comentarios = await Promise.all(
+              tarefaUsuarios.map(async (tarefaUsuario) => {
+                const comentarios = await Comentario.findAll({
+                  where: { tarefa_user_id: tarefaUsuario.id },
+                });
+                return comentarios;
+              })
+            ).then((allComments) => allComments.flat());
+
+            // Fetch members responsible for the task using Tarefa_Usuario
+            const responsaveis = await Tarefa_Usuario.findAll({
+              where: { tarefa_id: tarefa.id },
+              include: [{ model: db.User, as: 'user' }],
+            });
+
+            // Map members to the expected structure, ensuring uniqueness by user_id
+            const uniqueMembers = [
+              ...new Map(
+                responsaveis.map((responsavel) => [
+                  responsavel.user_id,
+                  {
+                    id: responsavel.user_id,
+                    name: responsavel.user.name, // Assuming `User` has `name`
+                    description: responsavel.user.descricao, // Assuming `User` has `descricao`
+                  },
+                ])
+              ).values(),
+            ];
+
+            // Map comments to the expected structure
+            const comments = comentarios.map((comentario) => ({
+              id: comentario.id,
+              comment: comentario.texto, // Assuming `Comentario` has `texto`
+              date: comentario.createdAt, // Assuming `createdAt` is the timestamp
+            }));
+
+            // Return the task with its details
+            return {
+              name: tarefa.title, // Assuming `Tarefa` has `title`
+              description: tarefa.descricao, // Assuming `Tarefa` has `descricao`
+              id: tarefa.id,
+              deadline: tarefa.prazo, // Assuming `Tarefa` has `prazo`
+              members: uniqueMembers,
+              comments,
+            };
+          })
+        );
+
+        // Return the category with its tasks
+        return {
+          name: categoria.title, // Assuming `Categoria` has `title`
+          description: categoria.descricao, // Assuming `Categoria` has `descricao`
+          id: categoria.id,
+          tasks: tasksWithDetails,
+        };
+      })
+    );
+
+    // Fetch members and managers of the project from Projeto_Usuario
+    const projetoUsuarios = await Projeto_Usuario.findAll({
+      where: { projeto_id: id },
+      attributes: ['id', 'funcao', 'data_inicio', 'data_fim', 'status', 'salario', 'projeto_id', 'user_id', 'profile_id'],
+      include: [
+        {
+          model: db.User,
+          as: 'usuario',
+        },
+        {
+          model: db.Profile,
+          as: 'profile',
+        },
+      ],
+    });
+
+    // Map members and managers to the expected structure, ensuring no duplicates
+    const members = [
+      ...new Map(
+        projetoUsuarios
+          // .filter((projetoUsuario) => projetoUsuario.profile.name === 'Member') // Assuming `profile` has `name`
+          .map((projetoUsuario) => [
+            projetoUsuario.user_id,
+            {
+              id: projetoUsuario.user_id,
+              name: projetoUsuario.usuario.name, // Assuming `User` has `name`
+              description: projetoUsuario.usuario.descricao, // Assuming `User` has `descricao`
+            },
+          ])
+      ).values(),
+    ];
+
+    const managers = [
+      ...new Map(
+        projetoUsuarios
+          .filter((projetoUsuario) => projetoUsuario.profile.name === 'Manager') // Assuming `profile` has `name`
+          .map((projetoUsuario) => [
+            projetoUsuario.user_id,
+            {
+              id: projetoUsuario.user_id,
+              name: projetoUsuario.usuario.name, // Assuming `User` has `name`
+            },
+          ])
+      ).values(),
+    ];
+
+    // Construct the final project structure
+    const projectStructure = {
+      name: projeto.name, // Assuming `Projeto` has `name`
+      description: projeto.descricao, // Assuming `Projeto` has `descricao`
+      id: projeto.id,
+      status: projeto.status, // Assuming `Projeto` has `status`
+      date: projeto.data_inicio, // Assuming `Projeto` has `data_inicio`
+      deadline: projeto.data_fim, // Assuming `Projeto` has `data_fim`
+      categories: categoriesWithTasks,
+      members,
+      managers,
+    };
+
+    return projectStructure;
+  } catch (error) {
+    console.log(error);
+    throw new Error(error.message);
+  }
+};
 
 const projetoService = {
   createProjeto,
@@ -116,7 +274,8 @@ const projetoService = {
   getAllProjetos,
   getProjeto,
   updateProjeto,
-  getProjetoFist
+  getProjetoFist,
+  getProjetoFilter
 };
 
 module.exports = projetoService;

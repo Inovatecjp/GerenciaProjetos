@@ -15,7 +15,8 @@ router.get('/:id', profileController.show); // Lista usuário
 
 router.post('/',profileController.store);
 router.post('/admin',profileController.storeAdmin);
-
+router.post('/allSistema',profileController.allSistema);
+router.post('/addGestaoProfile',profileController.addGestaoProfile);
 
 router.put('/', profileController.update);
 router.delete('/', profileController.delete);

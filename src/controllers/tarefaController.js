@@ -50,6 +50,40 @@ const getAll = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+// Função para filtrar tarefas por data (data_inicio ou prazo)
+const filterByDate = async (req, res) => {
+    try {
+        const { data_inicio, prazo } = req.query;
+
+        // Chama o serviço para filtrar as tarefas
+        const tarefas = await tarefasService.filterTarefasByDate(data_inicio, prazo);
+
+        res.status(200).json({ data: tarefas, message: "Tarefas filtradas por data com sucesso" });
+    } catch (error) {
+        console.error('Erro ao filtrar tarefas por data:', error.message);
+        res.status(500).json({ error: error.message });
+    }
+};
+
+// Função para filtrar tarefas por responsável
+const filterByResponsavel = async (req, res) => {
+    try {
+        const { responsavel_id } = req.query;
+
+        // Verifica se o parâmetro responsavel_id foi fornecido
+        if (!responsavel_id) {
+            return res.status(400).json({ error: "Parâmetro 'responsavel_id' é obrigatório" });
+        }
+
+        // Chama o serviço para filtrar as tarefas pelo ID do responsável
+        const tarefas = await tarefasService.filterTarefasByResponsavel(responsavel_id);
+
+        res.status(200).json({ data: tarefas, message: "Tarefas filtradas por responsável com sucesso" });
+    } catch (error) {
+        console.error('Erro ao filtrar tarefas por responsável:', error.message);
+        res.status(500).json({ error: error.message });
+    }
+};
 
 const tarefaController = {
     create,
@@ -57,6 +91,9 @@ const tarefaController = {
     get,
     remove,
     update,
+    filterByDate,
+    filterByResponsavel,
 };
+
 
 module.exports = tarefaController;

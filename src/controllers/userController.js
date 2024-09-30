@@ -1,4 +1,5 @@
 const usersService = require('../services/userService');
+const projetoUsuarioService = require('../services/projetoUsuarioService');
 
 const create = async (req, res) => {
     try {
@@ -42,7 +43,8 @@ const getAll = async (req, res) => {
 
 const getUserWithoutPassword = async (req, res) => {
     try {
-        const user = await usersService.getUserWithoutPassword(req.session.user?.id||req.userInfo.id);
+        console.log(req.params.id||req.session.user?.id||req.userInfo.id)
+        const user = await usersService.getUserWithoutPassword(req.params.id||req.session.user?.id||req.userInfo.id);
         res.status(200).json({ data: user });
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -66,39 +68,57 @@ const authenticate = async (req, res) => {
     }
 };
 
-const login = async (req, res) => {
-    const { email, password } = req.body;
-
+const myProjetos = async (req, res) => {
     try {
-      // Buscar o usuário pelo e-mail
-      const user = await User.findOne({ where: { email } });
-  
-      if (!user) {
-        return res.status(400).json({ error: 'Usuário não encontrado' });
-      }
-  
-      // Verificar a senha
-      const isPasswordValid = await bcrypt.compare(password, user.hashed_password);
-      if (!isPasswordValid) {
-        return res.status(400).json({ error: 'Senha incorreta' });
-      }
-  
-      // Armazenar informações do usuário na sessão
-      req.session.userId = user.id;
-  
-      // Opcionalmente, armazene outras informações
-      req.session.user = {
-        id: user.id,
-        name: user.name,
-        email: user.email
-      };
-  
-      res.status(200).json({ message: 'Login bem-sucedido' });
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: 'Erro no servidor' });
+        const  projetos  = await projetoUsuarioService.getAssignmentByIdUSers(req.session.userId);
+
+        res.status(200).json({ projetos, message: 'Login bem-sucedido' });
+    } catch (error) {
+        res.status(401).json({ error: error.message });
     }
-  };
+};
+const participantesPorProjeto = async (req, res) => {
+    try {
+        const  projetos  = await projetoUsuarioService.getAssignmentByIdProjetos(req.params.id);
+
+        res.status(200).json({ projetos, message: 'Login bem-sucedido' });
+    } catch (error) {
+        res.status(401).json({ error: error.message });
+    }
+};
+// const login = async (req, res) => {
+//     const { email, password } = req.body;
+
+//     try {
+//       // Buscar o usuário pelo e-mail
+//       const user = await User.findOne({ where: { email } });
+  
+//       if (!user) {
+//         return res.status(400).json({ error: 'Usuário não encontrado' });
+//       }
+  
+//       // Verificar a senha
+//       const isPasswordValid = await bcrypt.compare(password, user.hashed_password);
+//       if (!isPasswordValid) {
+//         return res.status(400).json({ error: 'Senha incorreta' });
+//       }
+  
+//       // Armazenar informações do usuário na sessão
+//       req.session.userId = user.id;
+  
+//       // Opcionalmente, armazene outras informações
+//       req.session.user = {
+//         id: user.id,
+//         name: user.name,
+//         email: user.email
+//       };
+  
+//       res.status(200).json({ message: 'Login bem-sucedido' });
+//     } catch (err) {
+//       console.error(err);
+//       res.status(500).json({ error: 'Erro no servidor' });
+//     }
+//   };
 
 // const mudarSenha = async (req, res) => {
 //     try {
@@ -134,7 +154,8 @@ module.exports = {
     getAll,
     getUserWithoutPassword,
     authenticate,
-    login
+    myProjetos,
+    participantesPorProjeto
     // mudarSenha,
     // resetPassword,
     // requestPasswordReset

@@ -5,7 +5,7 @@ const { DataTypes } = require('sequelize');
 const STATUS = {
   contratado: 1,
   desativado: 2,
-}
+};
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
@@ -15,69 +15,66 @@ module.exports = {
         defaultValue: DataTypes.UUIDV4,
         allowNull: false,
         primaryKey: true,
-        type: Sequelize.UUIDV4
+        type: Sequelize.UUID,
       },
       funcao: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
       },
       data_inicio: {
         type: Sequelize.DATE,
-        allowNull: false
+        allowNull: false,
       },
       data_fim: {
         type: Sequelize.DATE,
-        allowNull: false
-
+        allowNull: true,
       },
       status: {
-        type: Sequelize.STRING,
-        values: Object.values(STATUS)
+        type: Sequelize.ENUM,
+        values: Object.values(STATUS),
+        allowNull: false,
       },
       salario: {
-        type: Sequelize.NUMBER
+        type: Sequelize.FLOAT,
+        allowNull: false,
       },
       projeto_id: {
-        type: Sequelize.UUIDV4,
+        type: Sequelize.UUID,
         references: {
           model: 'Projetos',
-          key: 'id'
-        },        
-        allowNull: false
-      },
-      user_id: {
-        type: Sequelize.UUIDV4,
-        references:{
-          model: 'users',
-          key: 'id'
+          key: 'id',
         },
         allowNull: false,
-        primaryKey: true
-
+      },
+      user_id: {
+        type: Sequelize.UUID,
+        references: {
+          model: 'users',
+          key: 'id',
+        },
+        allowNull: false,
       },
       profile_id: {
-        type: Sequelize.UUIDV4,
-        references:{
+        type: Sequelize.UUID,
+        references: {
           model: 'profiles',
-          key: 'id'
+          key: 'id',
         },
-        allowNull: false
+        allowNull: false,
       },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
-        defaultValue: new Date()
-
+        defaultValue: new Date(),
       },
       updatedAt: {
         allowNull: false,
         type: Sequelize.DATE,
-        defaultValue: new Date()
-
-      }
+        defaultValue: new Date(),
+      },
     });
   },
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('Projeto_Usuario');
-  }
+  },
 };

@@ -32,6 +32,12 @@ module.exports = (sequelize, DataTypes) => {
 
   Projeto_Usuario.init(
     {
+      id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true,
+        allowNull: false,
+      },
       funcao: {
         type: DataTypes.STRING,
         allowNull: false,

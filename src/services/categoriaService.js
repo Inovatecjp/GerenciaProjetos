@@ -3,6 +3,7 @@ const HttpError = require("../utils/customError/httpError");
 const db = require('../sequelize/models/index');
 
 const Categoria = db.Categoria;
+const Tarefa = db.Tarefa;
 
 // Função para criar uma nova categoria
 const createCategoria = async (body) => {
@@ -67,6 +68,50 @@ const getCategoria = async (id) => {
     throw err;
   }
 };
+const getCategoriabyidPrjeto = async (id) => {
+  try {
+    const categoria = await Categoria.findOne({ where: { projeto_id:id } });
+
+    if (!categoria) {
+      throw new HttpError(404, "Categoria não encontrada.");
+    }
+
+    return categoria;
+  } catch (err) {
+    console.error('Erro ao obter categoria:', err.message);
+    throw err;
+  }
+};
+const getTarefasByProjetoId = async (idProjeto) => {
+  try {
+    // Busca todas as categorias associadas ao projeto
+    const categorias = await getCategoriabyidProjeto(idProjeto);
+
+    if (!categorias || categorias.length === 0) {
+      throw new HttpError(404, "Nenhuma categoria encontrada para o projeto.");
+    }
+
+    // Busca as tarefas associadas a cada categoria
+    const tarefasPorCategoria = await Promise.all(
+      categorias.map(async (categoria) => {
+        // Busca tarefas para a categoria atual
+        const tarefas = await Tarefa.findAll({
+          where: { categoria_id: categoria.id },
+        });
+
+        return {
+          categoria: categoria, // Inclui informações da categoria
+          tarefas: tarefas, // Lista de tarefas associadas
+        };
+      })
+    );
+
+    return tarefasPorCategoria;
+  } catch (err) {
+    console.error('Erro ao obter tarefas pelas categorias:', err.message);
+    throw err;
+  }
+};
 
 // Função para atualizar uma categoria por ID
 const updateCategoria = async (id, body) => {
@@ -92,6 +137,8 @@ const categoriaService = {
   getAllCategorias,
   getCategoria,
   updateCategoria,
+  getCategoriabyidPrjeto,
+  getTarefasByProjetoId
 };
 
 module.exports = categoriaService;

@@ -13,17 +13,22 @@ router.put('/:id', AuthMiddleware.isAuthenticated(), userController.update);
   // Rota para deletar um usuário
 router.delete('/:id', AuthMiddleware.isAuthenticated(), userController.delete);
   // Rota para obter todos os usuários
-router.get('/', userController.getAll);
 
-
-
-
-
-
-// Rota para obter um usuário sem a senha
+  
+  // Rota para obter um usuário sem a senha
 router.get('/me', AuthMiddleware.isAuthenticated(), userController.getUserWithoutPassword);
 router.put('/me', AuthMiddleware.isAuthenticated(), userController.update);
 router.delete('/me', AuthMiddleware.isAuthenticated(), userController.delete);
+router.get('/me/projetos', AuthMiddleware.isAuthenticated(), userController.myProjetos);
+
+//extras
+  router.get('/projetos/:id', userController.participantesPorProjeto); /// todos os partipantes do pojeto 
+  router.get('/:id', userController.getUserWithoutPassword);/// pegar apenas um user 
+
+
+
+
+
 
 
 // Rota para autenticar um usuário 

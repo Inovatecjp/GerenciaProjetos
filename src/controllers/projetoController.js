@@ -37,6 +37,7 @@ const remove = async (req, res) => {
 // Função para obter um projeto por ID
 const get = async (req, res) => {
   try {
+    console.log('=-42134342134=-=-=-=-=-=-=-')
     const projeto = await projetoService.getProjeto(req.params.id);
     res.status(200).json({ data: projeto, message: "Projeto obtido com sucesso." });
   } catch (error) {
@@ -55,13 +56,37 @@ const getAll = async (req, res) => {
     res.status(error.status || 500).json({ error: error.message });
   }
 };
+const getAllInfos = async (req, res) => {
+  try {
+    console.log('=-=-=-=-=-=-=-=-')
+    const idProjeto = req.params.id
+    const projetos = await projetoService.getProjetoFilter(idProjeto);
+    res.status(200).json({ data: projetos, message: "Lista de projetos obtida com sucesso." });
+  } catch (error) {
+    console.error('Erro ao obter lista de projetos:', error.message);
+    res.status(error.status || 500).json({ error: error.message });
+  }
+};
 
+const getAlltarefa= async (req, res) => {
+  try {
+    console.log('=-=-=-=-=-=-=-=-')
+    const idProjeto = req.params.id
+    const projetos = await projetoService.getProjetoFilter(idProjeto);
+    res.status(200).json({ data: projetos, message: "Lista de projetos obtida com sucesso." });
+  } catch (error) {
+    console.error('Erro ao obter lista de projetos:', error.message);
+    res.status(error.status || 500).json({ error: error.message });
+  }
+};
 const projetoController = {
   create,
   getAll,
   get,
   remove,
   update,
+  getAllInfos,
+  getAlltarefa
 };
 
 module.exports = projetoController;

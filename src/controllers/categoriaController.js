@@ -56,12 +56,34 @@ const getAll = async (req, res) => {
   }
 };
 
+const getCategoriabyidPrjeto = async (req, res) => {
+  try {
+    const categorias = await categoriaService.getCategoriabyidPrjeto(req.params.id);
+    res.status(200).json({ data: categorias, message: "Lista de categorias obtida com sucesso." });
+  } catch (error) {
+    console.error('Erro ao obter lista de categorias:', error.message);
+    res.status(error.status || 500).json({ error: error.message });
+  }
+};
+const getTarefabyidPrjeto = async (req, res) => {
+  try {
+    const categorias = await categoriaService.getTarefasByProjetoId(req.params.id);
+    res.status(200).json({ data: categorias, message: "Lista de categorias obtida com sucesso." });
+  } catch (error) {
+    console.error('Erro ao obter lista de categorias:', error.message);
+    res.status(error.status || 500).json({ error: error.message });
+  }
+};
+
+
 const categoriaController = {
   create,
   getAll,
   get,
   remove,
   update,
+  getCategoriabyidPrjeto,
+  getTarefabyidPrjeto
 };
 
 module.exports = categoriaController;

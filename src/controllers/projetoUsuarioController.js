@@ -6,15 +6,16 @@ require('dotenv').config();
 
 const assignUser = async (req, res) => {
   try {
+
     const projeto = await projetoService.getProjetoFist(); // Fetch project
     const profile = await profileService.getProfile(req.body.profile_id); // Fetch profile by ID
 
     req.body.profile_id = profile.id; // Set the profile ID correctly
-    req.body.user_id = req.session.user?.id || req.userInfo?.id; // Ensure user ID is valid
+    req.body.user_id =  req.session.user?.id ;  // Ensure user ID is valid
     req.body.projeto_id = projeto.id; // Set project ID
     req.body.id = uuidv4(); // Set project ID
-    
     console.log(req.body)
+    
     const assignment = await projetoUsuarioService.assignUserToProject(req.body);
     res.status(201).json({ data: assignment });
   } catch (error) {

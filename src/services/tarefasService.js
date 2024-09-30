@@ -89,13 +89,52 @@ const updateTarefa = async (id, body) => {
         throw err;
     }
 };
+const filterTarefasByDate = async (dataInicio, prazo) => {
+    try {
+        // Cria um objeto de condições dinâmico para a consulta
+        const whereConditions = {};
+        if (dataInicio) {
+            whereConditions.data_inicio = dataInicio;
+        }
+        if (prazo) {
+            whereConditions.prazo = prazo;
+        }
 
-const tarefasService = {
+        // Busca todas as tarefas que correspondem às condições
+        const tarefas = await Tarefa.findAll({
+            where: whereConditions,
+        });
+
+        return tarefas;
+    } catch (err) {
+        console.error('Erro ao filtrar tarefas por data:', err.message);
+        throw err;
+    }
+};
+
+// Função para filtrar tarefas por responsável
+const filterTarefasByResponsavel = async (responsavelId) => {
+    try {
+        // Busca todas as tarefas que correspondem ao ID do responsável
+        const tarefas = await Tarefa.findAll({
+            where: {
+                responsavel_id: responsavelId,
+            },
+        });
+
+        return tarefas;
+    } catch (err) {
+        console.error('Erro ao filtrar tarefas por responsável:', err.message);
+        throw err;
+    }
+};const tarefasService = {
     create,
     deleteTarefa,
     getAllTarefas,
     getTarefa,
-    updateTarefa
+    updateTarefa,
+    filterTarefasByDate,
+    filterTarefasByResponsavel,
 };
 
 module.exports = tarefasService;

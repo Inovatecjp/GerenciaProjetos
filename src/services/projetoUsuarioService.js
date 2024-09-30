@@ -6,7 +6,7 @@ const ProjetoUsuario = db.Projeto_Usuario;
 const assignUserToProject = async (data) => {
   try {
     console.log(data)
-    const newAssignment = await ProjetoUsuario.create(data);
+    const newAssignment = await ProjetoUsuario.create({...data});
     return newAssignment;
   } catch (error) {
     console.log(error)
@@ -42,6 +42,40 @@ const getAssignmentById = async (userId, projetoId) => {
   }
 };
 
+const getAssignmentByIdUSers = async (userId) => {
+  try {
+    const assignment = await ProjetoUsuario.findAll({
+      where: { user_id: userId },
+      attributes: [`funcao`, `data_inicio`, `data_fim`, `status`, `salario`, `projeto_id`, `user_id`, `profile_id`, `createdAt`, `updatedAt`,], // Replace with actual column names you need
+    });
+
+    if (!assignment) {
+      throw new HttpError(404, 'Assignment not found');
+    }
+
+    return assignment;
+  } catch (error) {
+    throw new HttpError(500, `Failed to retrieve assignment: ${error.message}`);
+  }
+};
+
+
+const getAssignmentByIdProjetos = async ( projetoId) => {
+  try {
+    const assignment = await ProjetoUsuario.findOne({
+      where: { projeto_id: projetoId },
+      attributes: [`funcao`, `data_inicio`, `data_fim`, `status`, `salario`, `projeto_id`, `user_id`, `profile_id`, `createdAt`, `updatedAt`,], // Replace with actual column names you need
+    });
+
+    if (!assignment) {
+      throw new HttpError(404, 'Assignment not found');
+    }
+
+    return assignment;
+  } catch (error) {
+    throw new HttpError(500, `Failed to retrieve assignment: ${error.message}`);
+  }
+};
 const updateAssignment = async (userId, projetoId, data) => {
   try {
     const [updatedRowCount, updatedRows] = await ProjetoUsuario.update(data, {
@@ -81,4 +115,6 @@ module.exports = {
   getAssignmentById,
   updateAssignment,
   deleteAssignment,
+  getAssignmentByIdUSers,
+  getAssignmentByIdProjetos
 };
