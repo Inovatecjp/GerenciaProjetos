@@ -40,6 +40,39 @@ const createUser = async (body) => {
     }
 }
 
+
+const createUserProfileid = async (body,id) => {
+    try {
+
+        // if(mess.length>0){
+        //     throw new Error(error.mess)
+        // }
+
+        const hashedPassword = await bcrypt.hash(body.password, 10)
+
+        const novoUser = await User.create({
+            id: uuidv4(),
+            hashed_password: hashedPassword,
+            name: body.name,
+            email: body.email,
+            date_birth: body.date_birth,
+            phone: body.phone,
+            cpf: body.cpf,
+            profile_id:id,
+            status: 0
+        })
+
+        const token = jwt.sign({ id: novoUser.id, email: novoUser.email});
+
+        return {novoUser, token}
+
+    } catch (err) {
+        console.error(err.message)
+        throw new HttpError(400, "Não foi possível criar a tarefa");
+
+    }
+}
+
 const authenticate = async (body) => {
     const user = await getEmail(body.email)
     if (!user) {

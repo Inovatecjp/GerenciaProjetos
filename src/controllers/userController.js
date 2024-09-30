@@ -15,6 +15,30 @@ const create = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+const creategerente = async (req, res) => {
+    try {
+        const user = await usersService.createUser(req.body,'073f3020-7f44-11ef-bc0f-9549c5af3b02');
+        res.status(200).json({ data: user });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+const createadmin = async (req, res) => {
+    try {
+        const user = await usersService.createUser(req.body,'2b530720-7f44-11ef-a189-a54a33318914');
+        res.status(200).json({ data: user });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+const createcolaborador = async (req, res) => {
+    try {
+        const user = await usersService.createUser(req.body,'2b552a00-7f44-11ef-a189-a54a33318914');
+        res.status(200).json({ data: user });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
 
 const update = async (req, res) => {
     try {
@@ -216,7 +240,11 @@ module.exports = {
     myProjetos,
     participantesPorProjeto,
     perfilprojeto,
-    myprofile
+    myprofile,
+    creategerente,
+    createadmin,
+    createcolaborador
+    
     // mudarSenha,
     // resetPassword,
     // requestPasswordReset

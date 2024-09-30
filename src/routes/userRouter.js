@@ -8,6 +8,9 @@ const router = Router();
 //gercia de user ADminGerencte de sistema
   // Rota para criar um novo usuário
 router.post('/', userController.create);
+router.post('/gerente', userController.creategerente);
+router.post('/admin', userController.createadmin);
+router.post('/colaborador', userController.createcolaborador);
   //  Rota para atualizar um usuário
   // Rota para deletar um usuário
   // Rota para obter todos os usuários
