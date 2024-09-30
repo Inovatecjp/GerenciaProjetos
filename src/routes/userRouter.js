@@ -19,6 +19,7 @@ router.delete('/:id', AuthMiddleware.isAuthenticated(), userController.delete);
 router.get('/me', AuthMiddleware.isAuthenticated(), userController.getUserWithoutPassword);
 router.put('/me', AuthMiddleware.isAuthenticated(), userController.update);
 router.delete('/me', AuthMiddleware.isAuthenticated(), userController.delete);
+router.get('/me/profile', AuthMiddleware.isAuthenticated(), userController.myprofile);
 router.get('/me/projetos', AuthMiddleware.isAuthenticated(), userController.myProjetos);
 
 //extras
@@ -33,6 +34,7 @@ router.get('/me/projetos', AuthMiddleware.isAuthenticated(), userController.myPr
 
 // Rota para autenticar um usuário 
 router.post('/authenticate', userController.authenticate);
+router.post('/perfilprojeto',AuthMiddleware.isAuthenticated(), userController.perfilprojeto);
 
 
 router.post('/logout', AuthMiddleware.isAuthenticated(), (req, res) => {

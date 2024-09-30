@@ -31,8 +31,11 @@ class profileController {
         { method: 'POST', route: '/users', description: 'Resgitrar user' },
         { method: 'PUT', route: '/users/:id', description: 'atulaizar info de user' },
         { method: 'DELETE', route: '/users/:id', description: 'Deletat user' },
+        { method: 'GET', route: '/users/projetos/:id', description: 'Deletat user' },
+        { method: 'POST', route: '/perfilprojeto', description: 'Deletat user' },
 
         { method: 'GET', route: '/users/me', description: 'acesso as infos do proprio user' },
+        { method: 'GET', route: '/users/me/projetos', description: 'acesso as infos do proprio user' },
         { method: 'PUT', route: '/users/me', description: 'atulaizar as infos do proprio user' },
         { method: 'DELETE', route: '/users/me', description: 'deletar o proprio user' },
 
@@ -331,6 +334,44 @@ class profileController {
       return res.json({ message: 'Perfis e permissões de Gerente de Projeto e Usuário de Projeto criados com sucesso' });
     } catch (error) {
       console.error('Erro ao criar perfis e permissões:', error.message);
+      return res.status(500).json({ error: 'Erro ao criar perfis e permissões' });
+    }
+  }
+
+
+
+  async addProfileJose(req, res) {
+    try {
+      // Criação do perfil de Gerente de Projeto
+      const [gerenteProfile, createdGerente] = await Profile.findOrCreate({
+        where: { name: 'Gerente' },
+        defaults: {
+          name: 'Gerente',
+          description: 'Gerent1e com permissões para gerenciar projetos e tarefas',
+          isAdmin: false
+        }
+      });
+
+      const [adminProfile, createdadmin] = await Profile.findOrCreate({
+        where: { name: 'admin' },
+        defaults: {
+          name: 'admin',
+          description: 'Gere3nte com permissões para gerenciar projetos e tarefas',
+          isAdmin: false
+        }
+      });
+      const [colaboradorProfile, createdcolaborador] = await Profile.findOrCreate({
+        where: { name: 'colaborador' },
+        defaults: {
+          name: 'colaborador',
+          description: 'Ger2ente com permissões para gerenciar projetos e tarefas',
+          isAdmin: false
+        }
+      });
+      // Retorna sucesso
+      return res.json({ message: 'Perfis e permissões de Gerente de Projeto e Usuário de Projeto criados com sucesso' });
+    } catch (error) {
+      console.error('Erro ao criar perfis e permissões:', error);
       return res.status(500).json({ error: 'Erro ao criar perfis e permissões' });
     }
   }

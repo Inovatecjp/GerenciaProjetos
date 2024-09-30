@@ -3,6 +3,7 @@ const db = require('../sequelize/models/index');
 const Profile_Grant = db.ProfileGrant
 const Grands = db.Grands
 class AuthMiddleware {
+
   isAuthenticated() {
     return (req, res, next) => {
       if (req.session.user?.id) {
@@ -12,14 +13,22 @@ class AuthMiddleware {
     };
   }
 
-  hasPermission() {
+  hasPermission(isProjeto = false) {
     return async (req, res, next) => {
-      const { profileId } = req.session.user;
+      if (!req.session.user) {
+        return res.status(401).json({ error: 'Erro esta não sem session' });
+      }
+      const { profileId, profile_Projeto_id } = req.session.user;
       
       if (!profileId) {
         return res.status(401).json({ error: 'Profile not found in session' });
       }
-
+      // Use profile_Projeto_id if available; otherwise, use profileId
+      const effectiveProfileId = profile_Projeto_id ? profile_Projeto_id : profileId;
+  
+      // (Optional) Log or check which profile ID is being used
+      console.log('Effective Profile ID:', effectiveProfileId);
+      console.log('----------------------');
       if (Array.isArray(req.session.permissions) && req.session.permissions.length !== 0) {
         const uuidRegex = /(\{){0,1}[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}(\}){0,1}/
         const matches = req.path.match(uuidRegex)

@@ -51,14 +51,14 @@ class App {
   }
 
   middlewares() {
-    this.app.use(cors(corsOptions))
+    this.app.use(cors())
     this.app.use(express.json())
     this.app.use(express.urlencoded({ extended: true }))
     this.app.use(session({
       name: 'IJP',
       store: redisStore,
       resave: false,
-      saveUninitialized: false,
+      saveUninitialized: true,
       secret: process.env.COOKIE_SECRET,
       cookie:{
         httpOnly: false,
@@ -76,6 +76,7 @@ class App {
     this.app.use("/enderecos", enderecoRoutes);
     this.app.use("/projetos", projetosRoutes);
     this.app.use('/tarefaUsuario', tarefaUsuarioRoutes);
+    this.app.use('/projetoprofile', tarefaUsuarioRoutes);
     
     
     this.app.use("/profiles", profileRoutes);

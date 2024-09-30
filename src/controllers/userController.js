@@ -1,6 +1,11 @@
 const usersService = require('../services/userService');
 const projetoUsuarioService = require('../services/projetoUsuarioService');
+const db = require ('../sequelize/models/index')
 
+
+const Profile = db.Profile
+const Profile_Grant = db.ProfileGrant
+const Grands = db.Grands
 const create = async (req, res) => {
     try {
         const user = await usersService.createUser(req.body);
@@ -53,7 +58,7 @@ const getUserWithoutPassword = async (req, res) => {
 
 const authenticate = async (req, res) => {
     try {
-        const  {token,user}  = await usersService.authenticate(req.body);
+        const  {token,user,profile1}  = await usersService.authenticate(req.body);
         req.session.userId = user.id;
         // Opcionalmente, armazene outras informações
         req.session.user = {
@@ -62,7 +67,9 @@ const authenticate = async (req, res) => {
           email: user.email,
           profileId:user.profileId
         };
-        res.status(200).json({ token, message: 'Login bem-sucedido' });
+
+
+        res.status(200).json({ token, message: 'Login bem-sucedido' ,profile:profile1});
     } catch (error) {
         res.status(401).json({ error: error.message });
     }
@@ -70,17 +77,82 @@ const authenticate = async (req, res) => {
 
 const myProjetos = async (req, res) => {
     try {
-        const  projetos  = await projetoUsuarioService.getAssignmentByIdUSers(req.session.userId);
+        const  projetos  = await projetoUsuarioService.getAssignmentByIdUsers(req.session.userId);
 
         res.status(200).json({ projetos, message: 'Login bem-sucedido' });
     } catch (error) {
         res.status(401).json({ error: error.message });
     }
 };
+const myprofile = async (req, res) => {
+    try {
+        // Certifique-se de que a sessão existe e que possui userId
+        if (!req.session.user) {
+            return res.status(400).json({ message: 'User session is required' });
+        }
+
+        // Exibe informações da sessão
+        console.log(req.session.user);
+
+        // Busca os perfis usando profileId e profile_Projeto_id (permite que o segundo seja undefined)
+        const profileIds = [req.session.user.profileId, req.session.user.profile_Projeto_id].filter(Boolean); // Remove null/undefined
+
+        // Busca os perfis com base nos IDs válidos
+        const perfis = await Promise.all(profileIds.map(async (id) => {
+            return await Profile.findByPk(id);
+        }));
+
+        console.log(profileIds);
+
+        // Busca todos os grants relacionados a esses perfis e combina-os em um único array
+        const allGrants = await Promise.all(perfis.map(async (info) => {
+            
+            const grants = await Profile_Grant.findAll({
+                where: { profile_id: info.id },
+                include: [
+                    {
+                        model: Grands,
+                        required: true,
+                        as: 'grant', // Especifique o alias usado na associação
+                        attributes: ['route', 'method']
+                    }
+                ]
+            });
+
+            return grants;
+        }));
+
+        // Combina todos os grants em um único array
+        const combinedGrants = allGrants.flat(); // Usamos flat() para achatar a lista de grants
+
+        // Retorna a resposta com perfis e todos os grants combinados em um único array
+        res.status(200).json({ perfis, grants: combinedGrants, message: 'Login bem-sucedido' });
+    } catch (error) {
+        // Resposta de erro com o código apropriado e mensagem
+        res.status(500).json({ error: error.message });
+    }
+};
+
+
 const participantesPorProjeto = async (req, res) => {
     try {
         const  projetos  = await projetoUsuarioService.getAssignmentByIdProjetos(req.params.id);
 
+        res.status(200).json({ projetos, message: 'Login bem-sucedido' });
+    } catch (error) {
+        res.status(401).json({ error: error.message });
+    }
+};
+
+const perfilprojeto = async (req, res) => {
+    try {
+        const  projetos  = await projetoUsuarioService.getAssignmentByIdProjetos(req.body.idProjeto);
+        
+        console.log(projetos)
+        
+        const projetoID =  await Profile.findByPk(projetos.profile_id)
+        req.session.user.profile_Projeto_id = projetoID.id
+        console.log(req.session.user)
         res.status(200).json({ projetos, message: 'Login bem-sucedido' });
     } catch (error) {
         res.status(401).json({ error: error.message });
@@ -155,7 +227,9 @@ module.exports = {
     getUserWithoutPassword,
     authenticate,
     myProjetos,
-    participantesPorProjeto
+    participantesPorProjeto,
+    perfilprojeto,
+    myprofile
     // mudarSenha,
     // resetPassword,
     // requestPasswordReset

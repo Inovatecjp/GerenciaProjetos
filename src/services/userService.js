@@ -51,10 +51,10 @@ const authenticate = async (body) => {
     if (!isPasswordValid) {
         throw new Error("Usuário inválido")
     }
-    
+    const profile1 = await profileService.getProfile(user.profile_id)
+    console.log(profile1)
     const token = jwt.sign({ id: user.id, email: user.email,profileId:user.profile_id});
-    console.log(token)
-    return {token, user:{ id: user.id, email: user.email, name: user.name,profileId:user.profile_id}};
+    return {token, user:{ id: user.id, email: user.email, name: user.name,profileId:user.profile_id},profile1};
 }
 
 
