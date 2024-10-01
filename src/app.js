@@ -8,7 +8,7 @@ const RedisStore = require("connect-redis").default
 const session = require('express-session')
 const {createClient} = require('redis')
 
-const whiteList = ['http://localhost:3000'];
+const whiteList = ['http://192.168.15.73:3000','*','http://localhost:3000',];
 
 const tarefasRouter = require('./routes/tarefasRouter.js')
 const userRouter = require('./routes/userRouter.js')
@@ -27,6 +27,7 @@ const corsOptions = {
       callback(new Error("Not allowed by CORS"));
     }
   },
+  credentials: true, // Permitir cookies entre domínios
 };
 
 let redisClient = createClient({
@@ -51,20 +52,23 @@ class App {
   }
 
   middlewares() {
-    this.app.use(cors())
+    this.app.use(cors(corsOptions))
     this.app.use(express.json())
     this.app.use(express.urlencoded({ extended: true }))
     this.app.use(session({
       name: 'IJP',
       store: redisStore,
       resave: false,
-      saveUninitialized: true,
+      saveUninitialized: false, // Apenas salvar sessão se modificada
       secret: process.env.COOKIE_SECRET,
-      cookie:{
-        httpOnly: false,
-        maxAge: 1000 * 60 * 60 * 24
-      }
-    }))
+      cookie: {
+        httpOnly: true, // Proteção contra XSS
+        maxAge: 1000 * 60 * 60 * 24, // 1 dia
+        secure: false, // Defina como `true` em produção para HTTPS
+        sameSite: 'lax', // Controlar política de CORS para cookies
+      },
+    }));
+    
   }
 
   routes() {
