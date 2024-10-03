@@ -1,6 +1,8 @@
 const usersService = require('../services/userService');
 const projetoUsuarioService = require('../services/projetoUsuarioService');
-const db = require ('../sequelize/models/index')
+const profileService = require('../services/profileService');
+const db = require ('../sequelize/models/index');
+const { use } = require('../routes/userRouter');
 
 
 const Profile = db.Profile
@@ -15,9 +17,19 @@ const create = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+const createDinamico = async (req, res) => {
+    try {
+        const Id = req.params.id;
+
+        const user = await usersService.createUserProfileid(req.body, Id);
+        res.status(200).json({ data: user });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
 const creategerente = async (req, res) => {
     try {
-        const user = await usersService.createUser(req.body,'073f3020-7f44-11ef-bc0f-9549c5af3b02');
+        const user = await usersService.createUserProfileid(req.body,'073f3020-7f44-11ef-bc0f-9549c5af3b02');
         res.status(200).json({ data: user });
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -25,7 +37,7 @@ const creategerente = async (req, res) => {
 };
 const createadmin = async (req, res) => {
     try {
-        const user = await usersService.createUser(req.body,'2b530720-7f44-11ef-a189-a54a33318914');
+        const user = await usersService.createUserProfileid(req.body,'2b530720-7f44-11ef-a189-a54a33318914');
         res.status(200).json({ data: user });
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -33,7 +45,7 @@ const createadmin = async (req, res) => {
 };
 const createcolaborador = async (req, res) => {
     try {
-        const user = await usersService.createUser(req.body,'2b552a00-7f44-11ef-a189-a54a33318914');
+        const user = await usersService.createUserProfileid(req.body,'2b552a00-7f44-11ef-a189-a54a33318914');
         res.status(200).json({ data: user });
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -64,17 +76,31 @@ const deleteUser = async (req, res) => {
 
 const getAll = async (req, res) => {
     try {
+        // Fetch all users
         const users = await usersService.getAllUser();
-        res.status(200).json({ data: users });
+
+        // Fetch all profiles in one go
+        const profiles = await Profile.findAll();
+        const profileMap = profiles.reduce((acc, profile) => {
+            acc[profile.id] = profile.name;
+            return acc;
+        }, {});
+
+        // Map users with their profile names
+        const usersProfile = users.map(user => ({
+            user,
+            profileName: profileMap[user.profile_id] || null,
+        }));
+
+        res.status(200).json({ data: usersProfile });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 };
-
 const getUserWithoutPassword = async (req, res) => {
     try {
-        console.log(req.params.id||req.session.user?.id||req.userInfo.id)
-        const user = await usersService.getUserWithoutPassword(req.params.id||req.session.user?.id||req.userInfo.id);
+      
+        const user = await usersService.getUserWithoutPassword(req.params.id||req.userInfo.id||req.session.user?.id);
         res.status(200).json({ data: user });
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -84,17 +110,17 @@ const getUserWithoutPassword = async (req, res) => {
 const authenticate = async (req, res) => {
     try {
         const  {token,user,profile1}  = await usersService.authenticate(req.body);
-        req.session.userId = user.id;
-        // Opcionalmente, armazene outras informações
-        req.session.user = {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          profileId:user.profileId
-        };
+        // req.session.userId = user.id;
+        // // Opcionalmente, armazene outras informações
+        // req.session.user = {
+        //   id: user.id,
+        //   name: user.name,
+        //   email: user.email,
+        //   profileId:user.profileId
+        // };
 
 
-        res.status(200).json({ token, message: 'Login bem-sucedido' ,profile:profile1});
+        res.status(200).json({ token, message: 'Login bem-sucedido' ,user,profile:profile1});
     } catch (error) {
         res.status(401).json({ error: error.message });
     }
@@ -102,9 +128,9 @@ const authenticate = async (req, res) => {
 
 const myProjetos = async (req, res) => {
     try {
-        const  projetos  = await projetoUsuarioService.getAssignmentByIdUsers(req.params.id||req.session.user?.id||req.userInfo.id);
+        const  projetos  = await projetoUsuarioService.getAssignmentByIdUsers(req.params.id||req.userInfo.id||req.session.user?.id);
 
-        res.status(200).json({ projetos, message: 'Login bem-sucedido' });
+        res.status(200).json({ data:projetos, message: 'Login bem-sucedido' });
     } catch (error) {
         res.status(401).json({ error: error.message });
     }
@@ -112,7 +138,7 @@ const myProjetos = async (req, res) => {
 const myprofile = async (req, res) => {
     try {
         // Certifique-se de que a sessão existe e que possui userId
-        const user = await User.findByPk(req.params.id)
+        const user = await User.findByPk(req.params.id||req.userInfo.id||req.session.user?.id)
         // Busca os perfis com base nos IDs válidos
         const perfis = await Profile.findByPk(user.profile_id);
     
@@ -243,7 +269,8 @@ module.exports = {
     myprofile,
     creategerente,
     createadmin,
-    createcolaborador
+    createcolaborador,
+    createDinamico
     
     // mudarSenha,
     // resetPassword,

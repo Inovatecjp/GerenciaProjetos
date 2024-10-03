@@ -2,29 +2,33 @@ const express = require('express');
 const { Router } = express;
 const userController = require('../controllers/userController');
 
-const AuthMiddleware = require('../middlewares/authSession');
+const authMiddleware = require('../middlewares/auth');
 
 const router = Router();
 //gercia de user ADminGerencte de sistema
   // Rota para criar um novo usuário
-router.post('/', userController.create);
+// router.post('/register', userController.create);
 router.post('/gerente', userController.creategerente);
 router.post('/admin', userController.createadmin);
 router.post('/colaborador', userController.createcolaborador);
+// router.post('/brocha', userController.createbrocha);
+
   //  Rota para atualizar um usuário
   // Rota para deletar um usuário
   // Rota para obter todos os usuários
   
+router.get('/',  userController.getAll);
   
   // Rota para obter um usuário sem a senha o id é o id do user
-router.get('/me/:id',  userController.getUserWithoutPassword);
-router.put('/me/:id',  userController.update);
-router.delete('/me/:id',  userController.delete);
-router.get('/me/:id/profile',  userController.myprofile);
-router.get('/me/:id/projetos',  userController.myProjetos);
+router.get('/me',authMiddleware,  userController.getUserWithoutPassword);
+router.put('/me',authMiddleware,  userController.update);
+router.delete('/me',authMiddleware,  userController.delete);
+router.get('/me/profile',authMiddleware,  userController.myprofile);
+router.get('/me/projetos',authMiddleware,  userController.myProjetos);
 
 //extras
 router.get('/projetos/:id', userController.participantesPorProjeto); /// todos os partipantes do pojeto 
+
 router.get('/:id', userController.getUserWithoutPassword);/// pegar apenas um user 
 
 
@@ -37,7 +41,8 @@ router.delete('/:id',  userController.delete);
 
 // Rota para autenticar um usuário 
 router.post('/authenticate', userController.authenticate);
-router.post('/perfilprojeto/:id', userController.perfilprojeto);
+router.post('/perfilprojeto',authMiddleware, userController.perfilprojeto);
+router.post('/:id', userController.createDinamico);
 
 
 router.post('/logout',  (req, res) => {

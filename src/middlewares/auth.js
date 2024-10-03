@@ -1,7 +1,7 @@
 const jwt = require('../../config/jwt');
 const db = require('../sequelize/models/index')
-const Grant = db.grant
-const ProfileGrant = db.ProfileGrant
+const Grands = db.Grands
+const Profile_Grant = db.ProfileGrant
 
 
 
@@ -62,16 +62,16 @@ const authMiddleware = async (req, res, next) =>{
     }
 
 
-    console.log(req.query)
+    // console.log(req.query)
     
     req.userInfo = userInfo;
+    console.log(userInfo)
 
     const startParams = req.originalUrl.indexOf('?');
     req.userInfo.path = req.originalUrl.substring(0, startParams === -1 ? req.originalUrl.length : startParams);
 
     
     
-    console.log(userInfo)
     
     
     if(userInfo.isAdmin === true){
@@ -79,19 +79,23 @@ const authMiddleware = async (req, res, next) =>{
         
     }else{
         let profileGrants1= null
+        console.log(userInfo.profileId)
 
-        const profileGrants = await ProfileGrant.findAll({
-            include: {
-                model: Grant,
-                attributes: ["route", "filterableRoute"],
+        const permissions = await Profile_Grant.findAll({
+            where: { profile_id: userInfo.profileId },
+            include: [
+              {
+                model: Grands,
                 required: true,
-            },
-            where: {profileId: userInfo.profile_id},
-        });
+                as: 'grant', // Specify the alias used in the association
+                attributes: ['route', 'method']
+              }
+            ]
+          });
     
         
 
-        filterRoute(req.userInfo, profileGrants);
+        filterRoute(req.userInfo, permissions);
 
         if (req.userInfo.isPremisons) {
             

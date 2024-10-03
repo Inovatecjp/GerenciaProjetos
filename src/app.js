@@ -8,7 +8,7 @@ const RedisStore = require("connect-redis").default
 const session = require('express-session')
 const {createClient} = require('redis')
 
-const whiteList = ['http://localhost:3000'];
+const whiteList = ['http://192.168.15.73:3000','*','http://localhost:3000','http://25.51.2.93:3000'];
 
 const tarefasRouter = require('./routes/tarefasRouter.js')
 const userRouter = require('./routes/userRouter.js')
@@ -29,21 +29,21 @@ const corsOptions = {
   },
 };
 
-let redisClient = createClient({
-  url: "redis://localhost:6379"
-})
-redisClient.connect().catch(console.error)
+// let redisClient = createClient({
+//   url: "redis://localhost:6379"
+// })
+// redisClient.connect().catch(console.error)
 
-let redisStore = new RedisStore({
-  client: redisClient,
-  prefix: "gerencia:",
-  ttl: 60 * 60 * 24 //Opcional - Time-To-Live
-})
+// let redisStore = new RedisStore({
+//   client: redisClient,
+//   prefix: "gerencia:",
+//   ttl: 60 * 60 * 24 //Opcional - Time-To-Live
+// })
 
 class App {
   constructor() {
     this.app = express();
-    this.redisClient = redisClient
+    // this.redisClient = redisClient
     this.middlewares();
     this.routes();
     setupSwagger(this.app)
@@ -51,20 +51,20 @@ class App {
   }
 
   middlewares() {
-    this.app.use(cors())
+    this.app.use(cors(corsOptions))
     this.app.use(express.json())
     this.app.use(express.urlencoded({ extended: true }))
-    this.app.use(session({
-      name: 'IJP',
-      store: redisStore,
-      resave: false,
-      saveUninitialized: true,
-      secret: process.env.COOKIE_SECRET,
-      cookie:{
-        httpOnly: false,
-        maxAge: 1000 * 60 * 60 * 24
-      }
-    }))
+    // this.app.use(session({
+    //   name: 'IJP',
+    //   store: redisStore,
+    //   resave: false,
+    //   saveUninitialized: true,
+    //   secret: process.env.COOKIE_SECRET,
+    //   cookie:{
+    //     httpOnly: false,
+    //     maxAge: 1000 * 60 * 60 * 24
+    //   }
+    // }))
   }
 
   routes() {

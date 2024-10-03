@@ -15,16 +15,11 @@ class profileController {
 
       
       
-      const [profiles, created] = await Profile.findOrCreate({
-        where: {  name: 'User_comun'},
-        defaults: {
-                  
-          name: 'User_comun',
-          description: 'usuario comun',
-          isAdmin: false
-        }
-      })
-      const profil = created ? profiles : profiles;
+      // const [profiles, created] = await Profile.findOrCreate()
+      // const profil = created ? profiles : profiles;
+      const profil = await Profile.findByPk('2b552a00-7f44-11ef-a189-a54a33318914')
+
+      
       const routes = await Grands.bulkCreate([
         { method: 'GET', route: '/users', description: 'Pegar todos os user no sistema' },
         { method: 'GET', route: '/users/:id', description: 'pegar as info de um user especifico' },
@@ -36,6 +31,7 @@ class profileController {
 
         { method: 'GET', route: '/users/me', description: 'acesso as infos do proprio user' },
         { method: 'GET', route: '/users/me/projetos', description: 'acesso as infos do proprio user' },
+        { method: 'GET', route: '/users/me/profile', description: 'acesso as infos do proprio user' },
         { method: 'PUT', route: '/users/me', description: 'atulaizar as infos do proprio user' },
         { method: 'DELETE', route: '/users/me', description: 'deletar o proprio user' },
 

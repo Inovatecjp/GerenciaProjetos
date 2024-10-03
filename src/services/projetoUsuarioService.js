@@ -75,10 +75,11 @@ const getAssignmentByIdUsers = async (userId) => {
           where: { id: assignment.projeto_id }
         });
 
-        return {
-          ...assignment.toJSON(), // Convert Sequelize object to plain JSON
-          projeto: projeto ? projeto.toJSON() : null // Attach project details if found
-        };
+        return         projeto ? projeto.toJSON() : null // Attach project details if found
+
+          // ...assignment.toJSON(), // Convert Sequelize object to plain JSON
+          // projeto: projeto ? projeto.toJSON() : null // Attach project details if found
+        ;
       })
     );
 

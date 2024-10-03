@@ -210,6 +210,7 @@ module.exports = {
     getUserWithoutPassword,
     updateUser,
     getEmail,
+    createUserProfileid
 }
 
 //
