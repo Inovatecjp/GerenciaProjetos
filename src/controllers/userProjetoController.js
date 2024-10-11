@@ -1,6 +1,9 @@
+const { where } = require('sequelize');
 const db = require('../sequelize/models/index');
 const Tarefa = db.Tarefa;
 const Comentario = db.Comentario;
+const tarefaUsuarioService = require('../services/tarefaUsuarioService');
+const userService = require('../services/userService');
 
 class UserProjetoController {
   // Atualiza a categoria de uma tarefa
@@ -28,12 +31,14 @@ class UserProjetoController {
   async comentarEmTarefa(req, res) {
     try {
       const tarefaId = req.params.id;
-      const { texto, usuario_id } = req.body;
-
+      const { texto } = req.body;
+      const { id } = req.userInfo;
+      
+      const obj = {user_id:id,tarefa_id:tarefaId}
+      const newobj = tarefaUsuarioService.create(obj)
       const comentario = await Comentario.create({
-        tarefa_id: tarefaId,
-        usuario_id: usuario_id,
-        texto: texto,
+        tarefa_user_id: newobj.id,
+        texto:texto
       });
 
       return res.json({ message: 'Comentário adicionado à tarefa com sucesso', comentario });
@@ -42,6 +47,40 @@ class UserProjetoController {
       return res.status(500).json({ error: 'Erro ao comentar em tarefa' });
     }
   }
+  async getcomentarEmTarefa(req, res) {
+    try {
+      const tarefaId = req.params.id;
+  
+      // Get all task-user relations based on task id
+      const newobjs = await tarefaUsuarioService.getByIdtarefa(tarefaId);
+  
+      // Map over newobjs to fetch users asynchronously
+      const results = await Promise.all(newobjs.map(async t => {
+        const user = await userService.getUser(t.user_id);
+        return { id: t.id, user: user };
+      }));
+  
+      // Get all comments for the task-user relations
+      const commentIds = results.map(r => r.id); // Collect task-user ids
+  
+      const comentarios = await Comentario.findAll({
+        where: {
+          tarefa_user_id: commentIds, // Using array of IDs for search
+        }
+      });
+  
+      // Send the results
+      res.json({
+        tarefaId: tarefaId,
+        usersWithComments: results,
+        comentarios: comentarios
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  }
+  
 }
 
 module.exports = new UserProjetoController();

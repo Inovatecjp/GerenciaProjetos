@@ -185,7 +185,7 @@ const getProjetoFilter = async (id) => {
               name: tarefa.title, // Assuming `Tarefa` has `title`
               description: tarefa.descricao, // Assuming `Tarefa` has `descricao`
               id: tarefa.id,
-              deadline: tarefa.prazo, // Assuming `Tarefa` has `prazo`
+              prazo: tarefa.createdAt, // Assuming `Tarefa` has `prazo`
               members: uniqueMembers,
               comments,
             };

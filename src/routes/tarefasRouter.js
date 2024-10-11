@@ -26,6 +26,7 @@ router.put('/:id/categoria', projetoUsuarioController.atualizarCategoriaTarefa);
 
 // Rota para comentar em uma tarefa
 router.post('/:id/comentarios', projetoUsuarioController.comentarEmTarefa);
+router.get('/:id/comentarios', projetoUsuarioController.getcomentarEmTarefa);
 
 router.get('/:id', tarefaController.get);
 

@@ -1,0 +1,27 @@
+gerencia projeto controller
+  async atribuirUsuarioATarefa(req, res) {
+    try {
+      const tarefaId = req.params.id;
+      const { responsavel_id } = req.body;
+
+      const tarefa = await Tarefa.findByPk(tarefaId);
+      if (!tarefa) {
+        return res.status(404).json({ error: 'Tarefa não encontrada' });
+      }
+
+      tarefa.responsavel_id = responsavel_id;
+      await tarefa.save();
+
+      return res.json({ message: 'Usuário atribuído à tarefa com sucesso', tarefa });
+    } catch (error) {
+      console.error('Erro ao atribuir usuário à tarefa:', error.message);
+      return res.status(500).json({ error: 'Erro ao atribuir usuário à tarefa' });
+    }
+  }
+}
+
+
+endopites do gpt
+
+pegar todos os user que tem comentario por tarefas
+reafzer

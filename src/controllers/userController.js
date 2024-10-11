@@ -97,6 +97,20 @@ const getAll = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+
+const getAllnameid = async (req, res) => {
+    try {
+        // Fetch all users
+        let users = await usersService.getAllUser();
+
+        // Fetch all profiles in one go
+        users = users.map(t => {return {name:t.name,id:t.id}})
+
+        res.status(200).json({ data: users });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
 const getUserWithoutPassword = async (req, res) => {
     try {
       
@@ -186,11 +200,16 @@ const perfilprojeto = async (req, res) => {
         const  projetos  = await projetoUsuarioService.getAssignmentByIdProjetos(req.body.idProjeto);
         
         console.log(projetos)
+        let userInfo = req.userInfo
+        userInfo.idprojeto = projetos.id
         
-        const projetoID =  await Profile.findByPk(projetos.profile_id)
-        req.session.user.profile_Projeto_id = projetoID.id
-        console.log(req.session.user)
-        res.status(200).json({ projetos, message: 'Login bem-sucedido' });
+        // const projetoID =  await Profile.findByPk(projetos.profile_id)
+        // req.session.user.profile_Projeto_id = projetoID.id
+        // console.log(req.session.user)
+
+        const token = jwt.sign({ id: userInfo.id, userInfo: userInfo.email,profileId:userInfo.profile_id,projetoID:projetos.id});
+
+        res.status(200).json({ projetos, message: 'Login bem-sucedido' ,token});
     } catch (error) {
         res.status(401).json({ error: error.message });
     }
@@ -261,6 +280,7 @@ module.exports = {
     update,
     delete: deleteUser,
     getAll,
+    getAllnameid,
     getUserWithoutPassword,
     authenticate,
     myProjetos,

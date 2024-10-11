@@ -15,9 +15,17 @@ class profileController {
 
       
       
-      // const [profiles, created] = await Profile.findOrCreate()
-      // const profil = created ? profiles : profiles;
-      const profil = await Profile.findByPk('2b552a00-7f44-11ef-a189-a54a33318914')
+      const [profiles, created] = await Profile.findOrCreate({
+        where: { name: 'user_projeto' },
+        defaults: {
+          name: 'user_projeto',
+          description: 'user_projeto',
+          isAdmin: false,
+        },
+      });
+    
+      const profil = created ? profiles : profiles;
+      // const profil = await Profile.findByPk('2b552a00-7f44-11ef-a189-a54a33318914')
 
       
       const routes = await Grands.bulkCreate([
