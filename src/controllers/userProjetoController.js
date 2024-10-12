@@ -57,23 +57,23 @@ class UserProjetoController {
       // Map over newobjs to fetch users asynchronously
       const results = await Promise.all(newobjs.map(async t => {
         const user = await userService.getUser(t.user_id);
-        return { id: t.id, user: user };
-      }));
+        const comentarios = await Comentario.findAll({
+          where: {
+            tarefa_user_id: t.id, // Using array of IDs for search
+          }
+        });
+        if (comentarios.length > 0) {
+          return { id: t.id, user: user, comentarios: comentarios };
+        }
+        return null      }));
   
       // Get all comments for the task-user relations
-      const commentIds = results.map(r => r.id); // Collect task-user ids
-  
-      const comentarios = await Comentario.findAll({
-        where: {
-          tarefa_user_id: commentIds, // Using array of IDs for search
-        }
-      });
-  
+      const usersWithComments = results.filter(result => result !== null);
+
       // Send the results
       res.json({
         tarefaId: tarefaId,
-        usersWithComments: results,
-        comentarios: comentarios
+        usersWithComments: usersWithComments, // Contains only users with comments
       });
     } catch (error) {
       console.error(error);

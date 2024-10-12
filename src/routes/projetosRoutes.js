@@ -17,8 +17,9 @@ router.get('/allinfo/:id', projetoController.getAllInfos); // Obter um projeto e
 // Rota para listar todos os usuários de um projeto
 router.get('/:projetoId/usuarios', gerenteProjetoController.getUsuariosProjeto);
 
-// Rota para listar usuários sem tarefa
-router.get('/:projetoId/usuarios/sem-tarefa', gerenteProjetoController.getUsuariosSemTarefa);
+// Rota para listar usuários sem projeto
+router.get('/:projetoId/usuarios/sem-tarefas', gerenteProjetoController.getUsuariosSemTarefa);
+router.post('/:projetoId/tarefa/data', gerenteProjetoController.gettarefadata);
 
 
 

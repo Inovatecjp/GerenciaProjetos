@@ -166,7 +166,7 @@ const getUserWithoutPassword = async (id) => {
 
 const updateUser = async (userId, body) => {
     try {
-        const user = await this.getUser(userId)
+        const user = await getUser(userId)
         if (!user){
             throw new HttpError(404, "Usuário não existe")
 

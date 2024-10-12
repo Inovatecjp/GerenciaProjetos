@@ -11,7 +11,7 @@ const assignUser = async (req, res) => {
     
     
     const profile = await profileService.getProfile(req.body.profile_id); // Fetch profile by ID
-
+    console.log(req.body)
     req.body.profile_id = profile.id; // Set the profile ID correctly
     req.body.user_id =  req.body.id_user ;  // Ensure user ID is valid
     req.body.projeto_id = projeto.id; // Set project ID

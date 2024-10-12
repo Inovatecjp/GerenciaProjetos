@@ -3,6 +3,7 @@ const HttpError = require("../utils/customError/httpError");
 const db = require('../sequelize/models/index');
 
 const Tarefa = db.Tarefa;
+const Categoria = db.Categoria;
 
 // Função para criar uma nova tarefa
 const create = async (body) => {
@@ -12,7 +13,7 @@ const create = async (body) => {
             id: uuidv4(),
             descricao: body.descricao,
             data_inicio: body.data_inicio,
-            prazo: body.prazo,
+            data_fim: body.data_fim,
             title: body.title,
             projeto_id: body.projeto_id,
             responsavel_id: body.responsavel_id,
@@ -89,15 +90,40 @@ const updateTarefa = async (id, body) => {
         throw err;
     }
 };
-const filterTarefasByDate = async (dataInicio, prazo) => {
+const filterTarefasByDate = async (dataInicio, prazo, idprojeto) => {
     try {
         // Cria um objeto de condições dinâmico para a consulta
         const whereConditions = {};
-        if (dataInicio) {
-            whereConditions.data_inicio = dataInicio;
+        console.log(idprojeto)
+        // Busca as categorias relacionadas ao projeto
+        const categorias = await Categoria.findAll({
+            where: {
+                projeto_id: idprojeto
+            },
+            attributes: ['id']
+        });
+
+        // Verifica se encontrou categorias; se não, retorna uma lista vazia de tarefas
+        if (categorias.length === 0) {
+            return []; // Retorna lista vazia, pois não há categorias para o projeto
         }
-        if (prazo) {
-            whereConditions.prazo = prazo;
+
+        // Extraindo os IDs das categorias
+        const categoriaIds = categorias.map(c => c.id);
+
+        // Adiciona a condição de categoria
+        whereConditions.categoria_id = { [db.Sequelize.Op.in]: categoriaIds };
+
+        // Se ambas as datas forem fornecidas, pesquisa no intervalo
+        if (dataInicio && prazo) {
+            whereConditions.createdAt = { [db.Sequelize.Op.gte]: dataInicio }; // Tarefas com data_inicio maior ou igual a dataInicio
+            whereConditions.data_fim = { [db.Sequelize.Op.lte]: prazo }; // Tarefas com data_fim menor ou igual ao prazo
+        } else if (dataInicio) {
+            // Se apenas dataInicio for fornecida, pesquisa por data_inicio maior ou igual a dataInicio
+            whereConditions.createdAt = { [db.Sequelize.Op.gte]: dataInicio };
+        } else if (prazo) {
+            // Se apenas o prazo for fornecido, pesquisa por tarefas com data_fim menor ou igual ao prazo
+            whereConditions.data_fim = { [db.Sequelize.Op.lte]: prazo };
         }
 
         // Busca todas as tarefas que correspondem às condições
@@ -113,21 +139,39 @@ const filterTarefasByDate = async (dataInicio, prazo) => {
 };
 
 // Função para filtrar tarefas por responsável
-const filterTarefasByResponsavel = async (responsavelId) => {
+const filterTarefasByResponsavel = async (responsavelId, projetoID) => {
     try {
-        // Busca todas as tarefas que correspondem ao ID do responsável
+        // Busca as categorias relacionadas ao projeto
+        const categorias = await Categoria.findAll({
+            where: {
+                projeto_id: projetoID,
+            },
+            attributes: ['id'] // Pegamos apenas os IDs das categorias
+        });
+
+        // Se não houver categorias para o projeto, retorne uma lista vazia
+        if (categorias.length === 0) {
+            return [];
+        }
+
+        // Extraindo os IDs das categorias
+        const categoriaIds = categorias.map(c => c.id);
+
+        // Busca todas as tarefas que correspondem ao ID do responsável e ao projeto (categorias associadas)
         const tarefas = await Tarefa.findAll({
             where: {
                 responsavel_id: responsavelId,
+                categoria_id: { [db.Sequelize.Op.in]: categoriaIds }
             },
         });
 
         return tarefas;
     } catch (err) {
-        console.error('Erro ao filtrar tarefas por responsável:', err.message);
+        console.error('Erro ao filtrar tarefas por responsável e projeto:', err.message);
         throw err;
     }
-};const tarefasService = {
+};
+const tarefasService = {
     create,
     deleteTarefa,
     getAllTarefas,

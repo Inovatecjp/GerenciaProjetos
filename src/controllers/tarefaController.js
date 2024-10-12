@@ -53,14 +53,17 @@ const getAll = async (req, res) => {
 // Função para filtrar tarefas por data (data_inicio ou prazo)
 const filterByDate = async (req, res) => {
     try {
-        const { data_inicio, prazo } = req.query;
+        console.log(req.body)
+
+        const { data_inicio, data_fim } = req.query;
+        const { project_id } = req.body;
 
         // Chama o serviço para filtrar as tarefas
-        const tarefas = await tarefasService.filterTarefasByDate(data_inicio, prazo);
+        const tarefas = await tarefasService.filterTarefasByDate(data_inicio, data_fim,project_id);
 
         res.status(200).json({ data: tarefas, message: "Tarefas filtradas por data com sucesso" });
     } catch (error) {
-        console.error('Erro ao filtrar tarefas por data:', error.message);
+        console.error('Erro ao filtrar tarefas por data:', error);
         res.status(500).json({ error: error.message });
     }
 };
@@ -69,14 +72,15 @@ const filterByDate = async (req, res) => {
 const filterByResponsavel = async (req, res) => {
     try {
         const { responsavel_id } = req.query;
-
+        const { project_id } = req.body;
+        console.log(req.body)
         // Verifica se o parâmetro responsavel_id foi fornecido
         if (!responsavel_id) {
             return res.status(400).json({ error: "Parâmetro 'responsavel_id' é obrigatório" });
         }
 
         // Chama o serviço para filtrar as tarefas pelo ID do responsável
-        const tarefas = await tarefasService.filterTarefasByResponsavel(responsavel_id);
+        const tarefas = await tarefasService.filterTarefasByResponsavel(responsavel_id,project_id);
 
         res.status(200).json({ data: tarefas, message: "Tarefas filtradas por responsável com sucesso" });
     } catch (error) {

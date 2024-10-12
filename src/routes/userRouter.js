@@ -18,7 +18,7 @@ router.post('/colaborador', userController.createcolaborador);
   // Rota para obter todos os usuários
   
 router.get('/',  userController.getAll);
-router.get('/name',  userController.getAll);
+router.get('/name',  userController.getAllnameid);
   
   // Rota para obter um usuário sem a senha o id é o id do user
 router.get('/me',authMiddleware,  userController.getUserWithoutPassword);
