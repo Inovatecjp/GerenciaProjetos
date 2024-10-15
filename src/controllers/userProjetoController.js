@@ -53,7 +53,7 @@ class UserProjetoController {
   
       // Get all task-user relations based on task id
       const newobjs = await tarefaUsuarioService.getByIdtarefa(tarefaId);
-  
+      console.log(newobjs)
       // Map over newobjs to fetch users asynchronously
       const results = await Promise.all(newobjs.map(async t => {
         const user = await userService.getUser(t.user_id);
@@ -63,9 +63,12 @@ class UserProjetoController {
           }
         });
         if (comentarios.length > 0) {
-          return { id: t.id, user: user, comentarios: comentarios };
+          let newcomt = await comentarios.map(c =>{
+            return {comentarios:c, username:user.name,IdUser:user.id}
+          })
+          return { data:newcomt };
         }
-        return null      }));
+        return null}));
   
       // Get all comments for the task-user relations
       const usersWithComments = results.filter(result => result !== null);

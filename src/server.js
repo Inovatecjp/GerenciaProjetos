@@ -1,7 +1,7 @@
 const App = require('./app')
 const app = new App()
 
-app.start(3011)
+app.start(3012)
 
 process.on('SIGINT', () => {
     app.redisClient.quit()
