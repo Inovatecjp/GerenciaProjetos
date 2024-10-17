@@ -146,7 +146,7 @@ const myProjetos = async (req, res) => {
 
         res.status(200).json({ data:projetos, message: 'Login bem-sucedido' });
     } catch (error) {
-        res.status(401).json({ error: error.message });
+        res.status(404).json({ error: error.message });
     }
 };
 const myprofile = async (req, res) => {

@@ -16,9 +16,9 @@ class profileController {
       
       
       const [profiles, created] = await Profile.findOrCreate({
-        where: { name: 'user_projeto' },
+        where: { name: 'admin' },
         defaults: {
-          name: 'user_projeto',
+          name: 'admin',
           description: 'user_projeto',
           isAdmin: false,
         },
@@ -68,6 +68,7 @@ class profileController {
         { method: 'GET', route: '/tarefas', description: 'acesso as infos do proprio user' },
         { method: 'GET', route: '/tarefas/:id', description: 'acesso as infos do proprio user' },
         { method: 'POST', route: '/tarefas', description: 'acesso as infos do proprio user' },
+        { method: 'POST', route: '/tarefas/:id/comentarios', description: 'acesso as infos do proprio user' },
         { method: 'PUT', route: '/tarefas/:id', description: 'acesso as infos do proprio user' },
         { method: 'DELETE', route: '/tarefas/:id', description: 'pegar o plano do user' },
 

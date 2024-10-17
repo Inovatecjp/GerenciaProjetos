@@ -35,7 +35,7 @@ class UserProjetoController {
       const { id } = req.userInfo;
       
       const obj = {user_id:id,tarefa_id:tarefaId}
-      const newobj = tarefaUsuarioService.create(obj)
+      const newobj = await tarefaUsuarioService.create(obj)
       const comentario = await Comentario.create({
         tarefa_user_id: newobj.id,
         texto:texto
@@ -57,21 +57,18 @@ class UserProjetoController {
       // Map over newobjs to fetch users asynchronously
       const results = await Promise.all(newobjs.map(async t => {
         const user = await userService.getUser(t.user_id);
-        const comentarios = await Comentario.findAll({
+        const comentarios = await Comentario.findOne({
           where: {
-            tarefa_user_id: t.id, // Using array of IDs for search
+            tarefa_user_id: t.id, // Using the ID for search
           }
         });
-        if (comentarios.length > 0) {
-          let newcomt = await comentarios.map(c =>{
-            return {comentarios:c, username:user.name,IdUser:user.id}
-          })
-          return { data:newcomt };
-        }
-        return null}));
+    
+        
+        return {comentarios,user}}));
   
       // Get all comments for the task-user relations
-      const usersWithComments = results.filter(result => result !== null);
+      // const usersWithComments = results
+      const usersWithComments = results.filter(result => result.comentarios !== null);
 
       // Send the results
       res.json({

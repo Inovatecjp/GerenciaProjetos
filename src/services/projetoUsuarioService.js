@@ -71,11 +71,11 @@ const getAssignmentByIdUsers = async (userId) => {
     const assignmentWithProjects = await Promise.all(
       assignments.map(async (assignment) => {
         // Find the project details for the given projeto_id
-        const projeto = await Projeto.findOne({
+        let projeto = await Projeto.findOne({
           where: { id: assignment.projeto_id }
         });
-
-        return         projeto ? projeto.toJSON() : null // Attach project details if found
+        projeto =projeto ? projeto.toJSON() : null
+        return {...assignment,...projeto} // Attach project details if found
 
           // ...assignment.toJSON(), // Convert Sequelize object to plain JSON
           // projeto: projeto ? projeto.toJSON() : null // Attach project details if found
@@ -85,6 +85,7 @@ const getAssignmentByIdUsers = async (userId) => {
 
     return assignmentWithProjects;
   } catch (error) {
+    console.log(error)
     throw new HttpError(500, `Failed to retrieve assignments: ${error.message}`);
   }
 };
