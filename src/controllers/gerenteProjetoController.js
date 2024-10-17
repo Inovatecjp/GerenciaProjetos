@@ -27,41 +27,13 @@ class GerenteProjetoController {
  // Lista usuários que não têm uma tarefa atribuída
 async getUsuariosSemTarefa(req, res) {
   try {
-    const projetoId = req.params.projetoId;
+    const tarefaId = req.params.tarefaId;
 
-    // Encontre todos os usuários relacionados ao projeto via ProjetoUsuario
-    const usuariosNoProjeto = await ProjetoUsuario.findAll({
-      where: { projeto_id: projetoId },
-      attributes: ['user_id'],
-    });
-
-    // Extraindo apenas os IDs dos usuários no projeto
-    const idsUsuariosNoProjeto = usuariosNoProjeto.map(u => u.user_id);
-
-    // Pegue as categorias do projeto
-    const categoriasDoProjeto = await Categoria.findAll({
-      where: { projeto_id: projetoId },
-      attributes: ['id'],
-    });
-
-    // Extraindo os IDs das categorias
-    const idsCategorias = categoriasDoProjeto.map(c => c.id);
-
-    // Pegue as tarefas vinculadas a essas categorias
-    const tarefasDoProjeto = await Tarefa.findAll({
-      where: {
-        categoria_id: idsCategorias,
-      },
-      attributes: ['id'],
-    });
-
-    // Extraindo os IDs das tarefas
-    const idsTarefas = tarefasDoProjeto.map(t => t.id);
-
+    
     // Pegue os usuários que têm tarefas associadas a essas tarefas
     const usuariosComTarefa = await Tarefa_Usuario.findAll({
       where: {
-        tarefa_id: idsTarefas,
+        tarefa_id: tarefaId,
       },
       attributes: ['user_id'],
     });
@@ -70,12 +42,9 @@ async getUsuariosSemTarefa(req, res) {
     const idsUsuariosComTarefa = usuariosComTarefa.map(ut => ut.user_id);
     console.log(idsUsuariosComTarefa)
 
-    // Filtrando os usuários que não têm tarefas
-    const usuariosSemTarefa = usuariosNoProjeto.filter(
-      user => !idsUsuariosComTarefa.includes(user.user_id)
-    );
 
-    const userinfo = await Promise.all(usuariosSemTarefa.map(async t => {
+    const userinfo = await Promise.all(usuariosComTarefa.map(async t => {
+      
       return await User.findByPk(t.user_id); // use user_id aqui
     }));
 

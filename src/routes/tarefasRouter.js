@@ -19,6 +19,7 @@ router.post('/filter/responsavel', tarefaController.filterByResponsavel);//GET /
 
 router.post('/usuarios/:id', gerenteProjetoController.getUsuariosSemTarefa1);
 router.get('/:tarefaId/usuarios/com-tarefa', gerenteProjetoController.getUsuariosSemTarefa1);
+router.get('/:tarefaId/usuarios/', gerenteProjetoController.getUsuariosSemTarefa);
 
 // Rota para atribuir um usuário a uma tarefa
 
