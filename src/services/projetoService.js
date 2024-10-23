@@ -114,148 +114,166 @@ const getProjetoFist = async () => {
     throw new Error(error.message);
   }
 };
+// Função para buscar projeto por ID
+// Função para buscar categorias por projeto
+const getCategoriasByProjeto = async (projetoId) => {
+  return await Categoria.findAll({
+    where: { projeto_id: projetoId },
+  });
+};
+
+// Função para buscar tarefas por categoria
+const getTarefasByCategoria = async (categoriaId) => {
+  return await Tarefa.findAll({
+    where: { categoria_id: categoriaId },
+  });
+};
+
+// Função para buscar os comentários associados a uma tarefa através de Tarefa_Usuario
+const getComentariosByTarefaUsuarios = async (tarefaUsuarios) => {
+  const comentarios = await Promise.all(
+    tarefaUsuarios.map(async (tarefaUsuario) => {
+      return await Comentario.findAll({
+        where: { tarefa_user_id: tarefaUsuario.id },
+      });
+    })
+  );
+  return comentarios.flat();
+};
+
+// Função para buscar membros responsáveis por uma tarefa
+const getResponsaveisByTarefa = async (tarefaId) => {
+  const responsaveis = await Tarefa_Usuario.findAll({
+    where: { tarefa_id: tarefaId },
+    include: [{ model: db.User, as: 'user' }],
+  });
+
+  return [
+    ...new Map(
+      responsaveis.map((responsavel) => [
+        responsavel.user_id,
+        {
+          id: responsavel.user_id,
+          name: responsavel.user.name,
+          description: responsavel.user.descricao,
+        },
+      ])
+    ).values(),
+  ];
+};
+
+// Função para buscar detalhes de uma tarefa, incluindo comentários e membros
+const getTaskDetails = async (tarefa) => {
+  const tarefaUsuarios = await Tarefa_Usuario.findAll({
+    where: { tarefa_id: tarefa.id },
+  });
+
+  const comentarios = await getComentariosByTarefaUsuarios(tarefaUsuarios);
+  const members = await getResponsaveisByTarefa(tarefa.id);
+
+  const comments = comentarios.map((comentario) => ({
+    id: comentario.id,
+    comment: comentario.texto,
+    date: comentario.createdAt,
+  }));
+
+  return {
+    name: tarefa.title,
+    description: tarefa.descricao,
+    id: tarefa.id,
+    prazo: tarefa.createdAt,
+    members,
+    comments,
+  };
+};
+
+// Função para buscar tarefas detalhadas de cada categoria
+const getCategoryWithTasks = async (categoria) => {
+  const tarefas = await getTarefasByCategoria(categoria.id);
+  const tasksWithDetails = await Promise.all(
+    tarefas.map((tarefa) => getTaskDetails(tarefa))
+  );
+
+  return {
+    name: categoria.title,
+    description: categoria.descricao,
+    id: categoria.id,
+    tasks: tasksWithDetails,
+  };
+};
+
+// Função para buscar usuários de um projeto e separar membros e gerentes
+const getProjetoUsuarios = async (projetoId) => {
+  const projetoUsuarios = await Projeto_Usuario.findAll({
+    where: { projeto_id: projetoId },
+    attributes: ['id', 'funcao', 'data_inicio', 'data_fim', 'status', 'salario', 'projeto_id', 'user_id', 'profile_id'],
+    include: [
+      {
+        model: db.User,
+        as: 'usuario',
+      },
+      {
+        model: db.Profile,
+        as: 'profile',
+      },
+    ],
+  });
+
+  const members = [
+    ...new Map(
+      projetoUsuarios.map((projetoUsuario) => [
+        projetoUsuario.user_id,
+        {
+          id: projetoUsuario.user_id,
+          name: projetoUsuario.usuario.name,
+          description: projetoUsuario.usuario.descricao,
+        },
+      ])
+    ).values(),
+  ];
+
+  const managers = [
+    ...new Map(
+      projetoUsuarios
+        .filter((projetoUsuario) => projetoUsuario.profile.name === 'Manager')
+        .map((projetoUsuario) => [
+          projetoUsuario.user_id,
+          {
+            id: projetoUsuario.user_id,
+            name: projetoUsuario.usuario.name,
+          },
+        ])
+    ).values(),
+  ];
+
+  return { members, managers };
+};
+
+// Função principal para compor a estrutura completa do projeto
 const getProjetoFilter = async (id) => {
   try {
-    // Fetch the project by ID
-    const projeto = await Projeto.findByPk(id);
-    if (!projeto) {
-      throw new Error('Projeto não encontrado');
-    }
+    // Busca o projeto
+    const projeto = await getProjeto(id);
 
-    // Fetch all categories related to the project
-    const categorias = await Categoria.findAll({
-      where: { projeto_id: id },
-    });
+    // Busca categorias do projeto
+    const categorias = await getCategoriasByProjeto(id);
 
-    // Fetch all tasks for each category and construct the project structure
+    // Monta as categorias com as tarefas
     const categoriesWithTasks = await Promise.all(
-      categorias.map(async (categoria) => {
-        // Fetch tasks associated with the current category
-        const tarefas = await Tarefa.findAll({
-          where: { categoria_id: categoria.id },
-        });
-
-        // Map tasks to the desired structure
-        const tasksWithDetails = await Promise.all(
-          tarefas.map(async (tarefa) => {
-            // Fetch Tarefa_Usuario records associated with the task
-            const tarefaUsuarios = await Tarefa_Usuario.findAll({
-              where: { tarefa_id: tarefa.id },
-            });
-
-            // Fetch comments for each tarefaUsuario
-            const comentarios = await Promise.all(
-              tarefaUsuarios.map(async (tarefaUsuario) => {
-                const comentarios = await Comentario.findAll({
-                  where: { tarefa_user_id: tarefaUsuario.id },
-                });
-                return comentarios;
-              })
-            ).then((allComments) => allComments.flat());
-
-            // Fetch members responsible for the task using Tarefa_Usuario
-            const responsaveis = await Tarefa_Usuario.findAll({
-              where: { tarefa_id: tarefa.id },
-              include: [{ model: db.User, as: 'user' }],
-            });
-
-            // Map members to the expected structure, ensuring uniqueness by user_id
-            const uniqueMembers = [
-              ...new Map(
-                responsaveis.map((responsavel) => [
-                  responsavel.user_id,
-                  {
-                    id: responsavel.user_id,
-                    name: responsavel.user.name, // Assuming `User` has `name`
-                    description: responsavel.user.descricao, // Assuming `User` has `descricao`
-                  },
-                ])
-              ).values(),
-            ];
-
-            // Map comments to the expected structure
-            const comments = comentarios.map((comentario) => ({
-              id: comentario.id,
-              comment: comentario.texto, // Assuming `Comentario` has `texto`
-              date: comentario.createdAt, // Assuming `createdAt` is the timestamp
-            }));
-
-            // Return the task with its details
-            return {
-              name: tarefa.title, // Assuming `Tarefa` has `title`
-              description: tarefa.descricao, // Assuming `Tarefa` has `descricao`
-              id: tarefa.id,
-              prazo: tarefa.createdAt, // Assuming `Tarefa` has `prazo`
-              members: uniqueMembers,
-              comments,
-            };
-          })
-        );
-
-        // Return the category with its tasks
-        return {
-          name: categoria.title, // Assuming `Categoria` has `title`
-          description: categoria.descricao, // Assuming `Categoria` has `descricao`
-          id: categoria.id,
-          tasks: tasksWithDetails,
-        };
-      })
+      categorias.map((categoria) => getCategoryWithTasks(categoria))
     );
 
-    // Fetch members and managers of the project from Projeto_Usuario
-    const projetoUsuarios = await Projeto_Usuario.findAll({
-      where: { projeto_id: id },
-      attributes: ['id', 'funcao', 'data_inicio', 'data_fim', 'status', 'salario', 'projeto_id', 'user_id', 'profile_id'],
-      include: [
-        {
-          model: db.User,
-          as: 'usuario',
-        },
-        {
-          model: db.Profile,
-          as: 'profile',
-        },
-      ],
-    });
+    // Busca membros e gerentes do projeto
+    const { members, managers } = await getProjetoUsuarios(id);
 
-    // Map members and managers to the expected structure, ensuring no duplicates
-    const members = [
-      ...new Map(
-        projetoUsuarios
-          // .filter((projetoUsuario) => projetoUsuario.profile.name === 'Member') // Assuming `profile` has `name`
-          .map((projetoUsuario) => [
-            projetoUsuario.user_id,
-            {
-              id: projetoUsuario.user_id,
-              name: projetoUsuario.usuario.name, // Assuming `User` has `name`
-              description: projetoUsuario.usuario.descricao, // Assuming `User` has `descricao`
-            },
-          ])
-      ).values(),
-    ];
-
-    const managers = [
-      ...new Map(
-        projetoUsuarios
-          .filter((projetoUsuario) => projetoUsuario.profile.name === 'Manager') // Assuming `profile` has `name`
-          .map((projetoUsuario) => [
-            projetoUsuario.user_id,
-            {
-              id: projetoUsuario.user_id,
-              name: projetoUsuario.usuario.name, // Assuming `User` has `name`
-            },
-          ])
-      ).values(),
-    ];
-
-    // Construct the final project structure
+    // Monta a estrutura final do projeto
     const projectStructure = {
-      name: projeto.name, // Assuming `Projeto` has `name`
-      description: projeto.descricao, // Assuming `Projeto` has `descricao`
+      name: projeto.name,
+      description: projeto.descricao,
       id: projeto.id,
-      status: projeto.status, // Assuming `Projeto` has `status`
-      date: projeto.data_inicio, // Assuming `Projeto` has `data_inicio`
-      deadline: projeto.data_fim, // Assuming `Projeto` has `data_fim`
+      status: projeto.status,
+      date: projeto.data_inicio,
+      deadline: projeto.data_fim,
       categories: categoriesWithTasks,
       members,
       managers,
@@ -267,6 +285,7 @@ const getProjetoFilter = async (id) => {
     throw new Error(error.message);
   }
 };
+
 
 const projetoService = {
   createProjeto,
