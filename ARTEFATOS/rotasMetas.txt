@@ -1,0 +1,64 @@
+Listar todas as Metas
+
+    Endpoint: GET /metas
+    Descrição: Retorna uma lista de todas as Meta (metas) cadastradas.
+    Requisitos de Envio: Nenhum.
+Listar todas as Metas
+
+    Endpoint: GET /projetos/:id/usuarios
+    Descrição: Retorna as usuarios daquele projeto com a quantidade de tarefas dele.
+
+    Requisitos de Envio:
+        Path Parameter: id - o identificador único de projeto.
+
+1. Obter uma Meta Específica de projeto
+
+    Endpoint: GET projetos/:id/metas/
+    Descrição: Retorna as metas daquele projeto.
+    Requisitos de Envio:
+        Path Parameter: id - o identificador único de projeto.
+
+
+2. Obter uma Meta Específica
+
+    Endpoint: GET /metas/:id
+    Descrição: Retorna uma única Meta pelo seu id.
+    Requisitos de Envio:
+        Path Parameter: id - o identificador único da meta.
+
+3. Criar uma Nova Meta
+
+    Endpoint: POST /metas
+    Descrição: Cria uma nova Meta.
+    Requisitos de Envio:
+        Body: JSON com os dados da nova meta:
+
+        json
+
+        {
+          "projeto_id": "project-id-123",
+          "title": "Título da Meta",
+          "describe": "Descrição da meta"
+        }
+
+4. Atualizar uma Meta
+
+    Endpoint: PUT /metas/:id
+    Descrição: Atualiza uma Meta existente pelo id.
+    Requisitos de Envio:
+        Path Parameter: id - o identificador único da meta.
+        Body: JSON com os dados a serem atualizados:
+
+        json
+
+        {
+          "title": "Novo Título da Meta",
+          "describe": "Nova descrição da meta"
+        }
+
+5. Excluir uma Meta
+
+    Endpoint: DELETE /metas/:id
+    Descrição: Exclui uma Meta pelo id.
+    Requisitos de Envio:
+        Path Parameter: id - o identificador único da meta.

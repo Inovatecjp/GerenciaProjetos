@@ -8,17 +8,32 @@ class GerenteProjetoController {
   async getUsuariosProjeto(req, res) {
     try {
       const projetoId = req.params.id;
+  
+      // Obter todos os usuários do projeto e garantir que seja um array
+      const usersDoProjeto = await projetoService.getProjetoUsuarios(projetoId,true) || [];
+      // Verifica se `usersDoProjeto` é realmente um array
+
+      // Obter as categorias e tarefas associadas ao projeto
       const categorias = await projetoService.getCategoriasByProjeto(projetoId);
       const gettack = await projetoService.getListCategoriesWithTasks(categorias);
-      console.log(gettack);
-      const info = projetoService.contarOcorrenciasDeUsuarios(gettack);
-      return res.json(info);
+      
+      // Contar ocorrências de usuários nas tarefas
+      const ocorrenciasUsuarios = projetoService.contarOcorrenciasDeUsuarios(gettack);
+      
+      // Garantir que todos os usuários do projeto estejam na contagem
+      usersDoProjeto.forEach(user => {
+        if (!ocorrenciasUsuarios[user.id]) {
+          ocorrenciasUsuarios[user.id] = { name: user.name, count: 0 }; // Usuário sem tarefas
+        }
+      });
+  
+      return res.json(ocorrenciasUsuarios);
     } catch (error) {
       console.error('Erro ao obter usuários do projeto:', error.message);
       return res.status(500).json({ error: 'Erro ao obter usuários do projeto' });
     }
   }
-
+  
   // Lista usuários que têm uma tarefa atribuída a partir de um ID de tarefa
   async getUsuariosComTarefa(req, res) {
     try {

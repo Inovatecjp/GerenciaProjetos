@@ -38,8 +38,8 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       sequelize,
-      modelName: 'Categoria',
-      tableName: 'Categorias', // opcional: define o nome da tabela explicitamente
+      modelName: 'Metas',
+      tableName: 'Metas', // opcional: define o nome da tabela explicitamente
       timestamps: true, // ativa campos createdAt e updatedAt
     }
   );

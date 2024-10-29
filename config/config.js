@@ -10,7 +10,7 @@ module.exports = {
     database: process.env.DB_DATABASE_TEST || 'database_test',
     host: process.env.DB_HOST || '',
     dialect: 'sqlite',
-    storage: 'sequelize.sqlite' 
+    storage: 'sequelizeteste.sqlite' 
   },
   test: {
     username: process.env.DB_USERNAME,
@@ -32,6 +32,6 @@ module.exports = {
     database: process.env.DB_DATABASE_TEST || 'database_test',
     host: process.env.DB_HOST || '',
     dialect: 'sqlite',
-    storage: 'sequelize.sqlite'  // Necessário para SQLite
+    storage: 'sequelizeteste.sqlite' 
   },
 }

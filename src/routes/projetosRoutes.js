@@ -22,6 +22,7 @@ router.get('/tarefas/:id', categoriaController.getTarefabyidPrjeto); // Obter ta
 
 
 router.get('/:id/categoria', projetoController.getCategoriaByProjeto); // peghar o id do projeto para ter as categorias
+router.get('/:id/metas', projetoController.getMetabyProjeto); // peghar o id do projeto para ter as categorias
 
 
 router.post('/:projetoId/tarefa/data', gerenteProjetoController.gettarefadata); // Obter tarefas associadas a um usuário com base em data

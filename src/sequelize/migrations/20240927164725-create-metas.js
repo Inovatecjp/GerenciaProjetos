@@ -4,7 +4,7 @@ const { DESCRIBE } = require("sequelize/lib/query-types");
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('Categorias', {
+    await queryInterface.createTable('Metas', {
       id: {
         allowNull: false,
         primaryKey: true,
@@ -43,6 +43,6 @@ module.exports = {
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('Categorias');
+    await queryInterface.dropTable('Metas');
   }
 };

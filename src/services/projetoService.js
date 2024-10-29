@@ -125,38 +125,39 @@ const getCategoryWithTasks = async (categoria) => {
 };
 
 // Função para buscar membros e gerentes do projeto
-const getProjetoUsuarios = async (projetoId,all=false) => {
+const getProjetoUsuarios = async (projetoId, all = false) => {
+  // Consulta otimizada para buscar apenas os dados necessários em uma única chamada
   const projetoUsuarios = await Projeto_Usuario.findAll({
     where: { projeto_id: projetoId },
     attributes: ['user_id'],
-    include: [{ model: User, as: 'usuario' }, { model: db.Profile, as: 'profile' }],
+    include: [
+      { model: User, as: 'usuario', attributes: ['name', 'id'] },
+      { model: db.Profile, as: 'profile', attributes: ['name'] }
+    ],
   });
-if(all){
-  const allUsers = projetoUsuarios.map(pu => ({
-    id: pu.user_id,
-    name: pu.usuario.name,
-    description: pu.profile.name === 'Manager' ? undefined : pu.usuario.descricao, // Só inclui 'description' se não for 'Manager'
-    role: pu.profile.name,
-  }));
 
-  return allUsers;
-}
-  const members = projetoUsuarios
-    .filter(pu => pu.profile.name !== 'Manager')
-    .map(pu => ({
-      id: pu.user_id,
-      name: pu.usuario.name,
-      description: pu.usuario.descricao,
-    }));
+  // Otimização: único mapeamento para processar todos os usuários
+  return projetoUsuarios.reduce(
+    (acc, pu) => {
+      const userInfo = {
+        id: pu.user_id,
+        name: pu.usuario?.name,
+        description: pu.profile?.name === 'Manager' ? undefined : pu.usuario?.descricao,
+      };
 
-  const managers = projetoUsuarios
-    .filter(pu => pu.profile.name === 'Manager')
-    .map(pu => ({
-      id: pu.user_id,
-      name: pu.usuario.name,
-    }));
+      if (all) {
+        // Se `all` for true, retorna uma lista de todos os usuários com `role`
+        acc.push({ ...userInfo, role: pu.profile?.name });
+      } else if (pu.profile?.name === 'Manager') {
+        acc.managers.push(userInfo);
+      } else {
+        acc.members.push(userInfo);
+      }
 
-  return { members, managers };
+      return acc;
+    },
+    all ? [] : { members: [], managers: [] }
+  );
 };
 
 // Serviços de Projeto
@@ -223,12 +224,76 @@ const updateProjeto = async (id, body) => {
   await projeto.update(dataUpdate);
   return projeto;
 };
-const getListCategoriesWithTasks = async (cagoriasid) => {
-  const categoriesWithTasks =  await Promise.all(
-    cagoriasid.map((categoria) => getCategoryWithTasks(categoria))
-  );
-return categoriesWithTasks
-}
+const getListCategoriesWithTasks = async (categorias) => {
+  const categoriaIds = categorias.map((categoria) => categoria.id);
+
+  // Consulta SQL direta para obter todas as tarefas e os usuários associados de cada categoria
+  const query = `
+    SELECT 
+      C.id AS categoriaId,
+      C.title AS categoriaTitle,
+      T.id AS tarefaId,
+      T.title AS tarefaTitle,
+      T.descricao AS tarefaDescricao,
+      T.data_fim AS tarefaDataFim,
+      U.id AS userId,
+      U.name AS userName
+    FROM Categorias AS C
+    LEFT JOIN Tarefas AS T ON C.id = T.categoria_id
+    LEFT JOIN Tarefa_Usuario AS TU ON T.id = TU.tarefa_id
+    LEFT JOIN Users AS U ON TU.user_id = U.id
+    WHERE C.id IN (:categoriaIds)
+  `;
+
+  // Executar a consulta com os IDs das categorias
+  const resultados = await db.sequelize.query(query, {
+    replacements: { categoriaIds },
+    type: db.Sequelize.QueryTypes.SELECT,
+  });
+
+  // Organizar os resultados em uma estrutura de categorias com tarefas e usuários
+  const categoriesWithTasks = categorias.map((categoria) => {
+    const tarefasDaCategoria = resultados
+      .filter((row) => row.categoriaId === categoria.id)
+      .reduce((acc, row) => {
+        // Verificar se a tarefa já existe no acumulador
+        let tarefa = acc.find((t) => t.id === row.tarefaId);
+        
+        // Se a tarefa não existe, adicioná-la
+        if (!tarefa) {
+          tarefa = {
+            id: row.tarefaId,
+            name: row.tarefaTitle,
+            description: row.tarefaDescricao,
+            prazo: row.tarefaDataFim,
+            members: [],
+          };
+          acc.push(tarefa);
+        }
+
+        // Adicionar o usuário à lista de membros se houver um usuário associado
+        if (row.userId) {
+          tarefa.members.push({
+            id: row.userId,
+            name: row.userName,
+            description: row.userDescricao,
+          });
+        }
+        return acc;
+      }, []);
+
+    return {
+      id: categoria.id,
+      name: categoria.title,
+      description: categoria.descricao,
+      tasks: tarefasDaCategoria,
+    };
+  });
+
+  return categoriesWithTasks;
+};
+
+
 // Função para compor a estrutura completa do projeto
 const getProjetoFilter = async (id) => {
   console.log('-=-=-=-=-')

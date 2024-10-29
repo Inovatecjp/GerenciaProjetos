@@ -1,4 +1,5 @@
 const projetoService = require('../services/projetoService.js');
+const metaService = require('../services/metaService.js');
 
 // Função para criar um novo projeto
 const create = async (req, res) => {
@@ -45,7 +46,27 @@ const get = async (req, res) => {
     res.status(error.status || 500).json({ error: error.message });
   }
 };
+const getMetabyProjeto = async (req, res) => {
+  try {
+    // Obtém o projeto pelo ID passado como parâmetro
+    const projeto = await projetoService.getProjeto(req.params.id);
+    if (!projeto) {
+      return res.status(404).json({ error: "Projeto não encontrado" });
+    }
 
+    // Obtém as metas associadas ao projeto
+    const metas = await metaService.listarMetas({ projetoId: req.params.id });
+
+    // Retorna o projeto junto com suas metas
+    res.status(200).json({ 
+      data: { projeto, metas }, 
+      message: "Projeto e metas obtidos com sucesso." 
+    });
+  } catch (error) {
+    console.error('Erro ao obter projeto e metas:', error.message);
+    res.status(error.status || 500).json({ error: 'Erro ao obter projeto e metas' });
+  }
+};
 const getCategoriaByProjeto = async (req, res) => {
   try {
     const Categorias = await projetoService.getCategoriasByProjeto(req.params.id);
@@ -97,7 +118,8 @@ const projetoController = {
   update,
   getAllInfos,
   getAlltarefa,
-  getCategoriaByProjeto
+  getCategoriaByProjeto,
+  getMetabyProjeto
 };
 
 module.exports = projetoController;
