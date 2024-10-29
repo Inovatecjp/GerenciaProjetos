@@ -161,7 +161,7 @@ const myprofile = async (req, res) => {
 
         // Busca todos os grants relacionados a esses perfis e combina-os em um único array
         const allGrants =  await Profile_Grant.findAll({
-                where: { profile_id: info.id },
+                where: { profile_id: perfis.id },
                 include: [
                     {
                         model: Grands,
@@ -169,7 +169,9 @@ const myprofile = async (req, res) => {
                         as: 'grant', // Especifique o alias usado na associação
                         attributes: ['route', 'method']
                     }
-                ]
+                ],
+                attributes: ['id']
+
             });
 
     
@@ -179,6 +181,7 @@ const myprofile = async (req, res) => {
         // Retorna a resposta com perfis e todos os grants combinados em um único array
         res.status(200).json({ perfis, grants: allGrants, message: 'Login bem-sucedido' });
     } catch (error) {
+        console.log(error)
         // Resposta de erro com o código apropriado e mensagem
         res.status(500).json({ error: error.message });
     }

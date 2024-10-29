@@ -46,6 +46,16 @@ const get = async (req, res) => {
   }
 };
 
+const getCategoriaByProjeto = async (req, res) => {
+  try {
+    const Categorias = await projetoService.getCategoriasByProjeto(req.params.id);
+    res.status(200).json({ data: Categorias, message: "Projeto obtido com sucesso." });
+  } catch (error) {
+    console.error('Erro ao obter projeto:', error.message);
+    res.status(error.status || 500).json({ error: error.message });
+  }
+};
+
 // Função para obter todos os projetos
 const getAll = async (req, res) => {
   try {
@@ -86,7 +96,8 @@ const projetoController = {
   remove,
   update,
   getAllInfos,
-  getAlltarefa
+  getAlltarefa,
+  getCategoriaByProjeto
 };
 
 module.exports = projetoController;

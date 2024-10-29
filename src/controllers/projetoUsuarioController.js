@@ -36,8 +36,8 @@ const getAll = async (req, res) => {
 
 const getByProjetoId = async (req, res) => {
   try {
-    const projeto = await projetoService.getProjeto(req.params.idprojeto);
-    const user_id = req.params.id || req.session.user?.id || req.userInfo?.id; // Ensure user ID is valid
+    const projeto = await projetoService.getProjeto(req.params.id);
+    const user_id = req.session.user?.id || req.userInfo?.id; // Ensure user ID is valid
 
     const assignment = await projetoUsuarioService.getAssignmentById(user_id, projeto.id);
     if (assignment) {

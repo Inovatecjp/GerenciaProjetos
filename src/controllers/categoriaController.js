@@ -1,4 +1,5 @@
 const categoriaService = require('../services/categoriaService.js');
+const projetoService = require('../services/projetoService.js');
 
 // Função para criar uma nova categoria
 const create = async (req, res) => {
@@ -74,6 +75,16 @@ const getTarefabyidPrjeto = async (req, res) => {
     res.status(error.status || 500).json({ error: error.message });
   }
 };
+const getTarefabyCadegoriaID = async (req, res) => {
+  try {
+    const categorias = await projetoService.getCategoryWithTasks(req.params.id);
+    // console.log(categorias)
+        res.status(200).json({ data: categorias, message: "Lista de categorias obtida com sucesso." });
+  } catch (error) {
+    console.error('Erro ao obter lista de categorias:', error.message);
+    res.status(error.status || 500).json({ error: error.message });
+  }
+};
 
 
 const categoriaController = {
@@ -83,7 +94,8 @@ const categoriaController = {
   remove,
   update,
   getCategoriabyidPrjeto,
-  getTarefabyidPrjeto
+  getTarefabyidPrjeto,
+  getTarefabyCadegoriaID
 };
 
 module.exports = categoriaController;

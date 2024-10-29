@@ -17,8 +17,8 @@ router.get('/', tarefaController.getAll);
 router.post('/filter/date', tarefaController.filterByDate);//GET /tarefas/filter/date?data_inicio=2023-09-29&data_fim=2023-10-10
 router.post('/filter/responsavel', tarefaController.filterByResponsavel);//GET /tarefas/filter/responsavel?responsavel_id=responsavel-uuid
 
-router.post('/usuarios/:id', gerenteProjetoController.getUsuariosSemTarefa1);
-router.get('/:tarefaId/usuarios/com-tarefa', gerenteProjetoController.getUsuariosSemTarefa1);
+router.post('/usuarios/:id', gerenteProjetoController.getUsuariosSemTarefa);
+router.get('/:tarefaId/usuarios/com-tarefa', gerenteProjetoController.getUsuariosSemTarefa);
 router.get('/:tarefaId/usuarios/', gerenteProjetoController.getUsuariosSemTarefa);
 
 // Rota para atribuir um usuário a uma tarefa

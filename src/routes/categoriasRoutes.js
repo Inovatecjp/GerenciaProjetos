@@ -11,5 +11,6 @@ router.get('/', categoriaController.getAll); // Listar todas as categorias
 router.get('/:id', categoriaController.get); // Obter uma categoria específica por ID
 router.put('/:id',  categoriaController.update); // Atualizar categoria
 router.delete('/:id',  categoriaController.remove); // Deletar categoria
+router.get('/:id/tarefas', categoriaController.getTarefabyCadegoriaID); // Obter uma categoria específica por ID
 
 module.exports = router;
