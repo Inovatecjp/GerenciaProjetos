@@ -1,5 +1,5 @@
-'use strict';
-const { Model } = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 
 module.exports = (sequelize, DataTypes) => {
   class Tarefa extends Model {
@@ -10,10 +10,19 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // Define associações com outros modelos
-      Tarefa.belongsTo(models.User, { foreignKey: 'responsavel_id', as: 'responsavel' });
-      Tarefa.belongsTo(models.Categoria, { foreignKey: 'categoria_id', as: 'categorias' });
-      Tarefa.belongsTo(models.Metas, { foreignKey: 'metas_id', as: 'metas' });
-      Tarefa.hasMany(models.Tarefa_Usuario, { foreignKey: 'tarefa_id', as: 'tarefasUsuarios' });
+      Tarefa.belongsTo(models.User, {
+        foreignKey: "responsavel_id",
+        as: "responsavel",
+      });
+      Tarefa.belongsTo(models.Categoria, {
+        foreignKey: "categoria_id",
+        as: "categorias",
+      });
+      Tarefa.belongsTo(models.Metas, { foreignKey: "meta_id", as: "metas" });
+      Tarefa.hasMany(models.Tarefa_Usuario, {
+        foreignKey: "tarefa_id",
+        as: "tarefasUsuarios",
+      });
     }
   }
 
@@ -41,16 +50,16 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.UUID,
         allowNull: true,
         references: {
-          model: 'Categorias', // Nome da tabela referenciada
-          key: 'id',
+          model: "Categorias", // Nome da tabela referenciada
+          key: "id",
         },
       },
-      metas_id: {
+      meta_id: {
         type: DataTypes.UUID,
-        allowNull: false,
+        allowNull: true,
         references: {
-          model: 'Metas', // Nome da tabela referenciada
-          key: 'id',
+          model: "Metas", // Nome da tabela referenciada
+          key: "id",
         },
       },
       responsavel_id: {
@@ -60,8 +69,8 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       sequelize,
-      modelName: 'Tarefa',
-      tableName: 'Tarefas', // Define o nome da tabela explicitamente
+      modelName: "Tarefa",
+      tableName: "Tarefas", // Define o nome da tabela explicitamente
       timestamps: true, // Ativa campos createdAt e updatedAt
     }
   );
