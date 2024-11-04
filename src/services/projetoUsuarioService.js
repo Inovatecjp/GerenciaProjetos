@@ -61,7 +61,7 @@ const getAssignmentByIdUsers = async (userId) => {
         'updatedAt'
       ], // Replace with actual column names you need
     });
-
+    console.log(assignments)
     // Check if any assignments were found
     if (!assignments || assignments.length === 0) {
       throw new HttpError(404, 'No assignments found');

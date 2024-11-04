@@ -1,4 +1,5 @@
 const projetoService = require('../services/projetoService.js');
+const UserService = require('../services/userService.js');
 const db = require('../sequelize/models/index');
 const { Tarefa, Tarefa_Usuario, User,Categoria } = db;
 
@@ -87,7 +88,7 @@ class GerenteProjetoController {
     try {
       const { projetoId } = req.params;
 
-      const usuariosProjeto = await projetoService.getProjetoUsuarios(projetoId);
+      const usuariosProjeto = await projetoService.getProjetoUsuarios(projetoId,true);
       const usuariosComTarefa = await Tarefa_Usuario.findAll({
         where: { tarefa_id: { [db.Sequelize.Op.in]: usuariosProjeto.members.map(m => m.id) } },
         attributes: ['user_id'],
@@ -102,7 +103,55 @@ class GerenteProjetoController {
       return res.json(usuariosSemTarefa);
     } catch (error) {
       console.error('Erro ao buscar usuários sem tarefa:', error.message);
-      return res.status(500).json({ error: 'Erro ao buscar usuários sem tarefa.' });
+      return res.status(404).json({ error: 'Erro ao buscar usuários sem tarefa.' });
+    }
+  }
+  async getCommonIds(tarefasprojeto, usersProjeto) {
+    return tarefasprojeto.filter(id => usersProjeto.includes(id));
+}
+async getTarefaByUsuario(req, res) {
+  try {
+    const { id } = req.params;
+    const { projeto_id } = req.body;
+
+    // Obter IDs de tarefas associadas ao projeto de maneira otimizada
+    const tarefasDoProjeto = await projetoService.getTarefasByProjeto(projeto_id);
+
+    // Obter IDs de tarefas atribuídas ao usuário especificado
+    const tarefasUsuario = await Tarefa_Usuario.findAll({
+      where: { user_id: id },
+      attributes: ['tarefa_id'],
+      raw: true, // Adiciona eficiência retornando apenas dados brutos
+    });
+    
+    const tarefasUsuarioIds = tarefasUsuario.map(tarefa => tarefa.tarefa_id);
+    const tarefasComuns = tarefasDoProjeto.filter(tarefaId => tarefasUsuarioIds.includes(tarefaId));
+    
+    return res.json({ commonIds: tarefasComuns });
+  } catch (error) {
+    console.error('Erro ao buscar usuários sem tarefa:', error);
+    return res.status(404).json({ error: 'Erro ao buscar usuários sem tarefa.' });
+  }
+}
+  async getUsuariosNaTarefa(req, res) {
+    try {
+      const { tarefaId } = req.params;
+      console.log(tarefaId)
+
+      const usuariosComTarefa = await Tarefa_Usuario.findAll({
+        where: { tarefa_id: tarefaId  },
+        attributes: ['user_id'],
+      });
+      console.log('--=-=-===-')
+
+      console.log(usuariosComTarefa)
+      console.log('--=-=-===-')
+      const idsUsuariosComTarefa = await usuariosComTarefa.map(ut => ut.user_id);
+      const usuariosComTarefaInfo = await UserService.getUserList(idsUsuariosComTarefa)
+      return res.json(usuariosComTarefaInfo);
+    } catch (error) {
+      console.error('Erro ao buscar usuários sem tarefa:', error);
+      return res.status(404).json({ error: 'Erro ao buscar usuários sem tarefa.' });
     }
   }
 

@@ -55,7 +55,7 @@ const getMetabyProjeto = async (req, res) => {
     }
 
     // Obtém as metas associadas ao projeto
-    const metas = await metaService.listarMetas({ projetoId: req.params.id });
+    const metas = await metaService.listarMetas({ projeto_id: req.params.id });
 
     // Retorna o projeto junto com suas metas
     res.status(200).json({ 

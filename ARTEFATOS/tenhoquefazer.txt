@@ -1,27 +1,22 @@
-gerencia projeto controller
-  async atribuirUsuarioATarefa(req, res) {
+user controler
+const perfilprojeto = async (req, res) => {
     try {
-      const tarefaId = req.params.id;
-      const { responsavel_id } = req.body;
-
-      const tarefa = await Tarefa.findByPk(tarefaId);
-      if (!tarefa) {
-        return res.status(404).json({ error: 'Tarefa não encontrada' });
-      }
-
-      tarefa.responsavel_id = responsavel_id;
-      await tarefa.save();
-
-      return res.json({ message: 'Usuário atribuído à tarefa com sucesso', tarefa });
+        const  projetos  = await projetoUsuarioService.getAssignmentByIdProjetos(req.body.idProjeto);
+        
+        console.log(projetos)
+        
+        const projetoID =  await Profile.findByPk(projetos.profile_id)
+        req.session.user.profile_Projeto_id = projetoID.id
+        console.log(req.session.user)
+        res.status(200).json({ projetos, message: 'Login bem-sucedido' });
     } catch (error) {
-      console.error('Erro ao atribuir usuário à tarefa:', error.message);
-      return res.status(500).json({ error: 'Erro ao atribuir usuário à tarefa' });
+        res.status(401).json({ error: error.message });
     }
-  }
-}
+};
 
 
 endopites do gpt
 
 pegar todos os user que tem comentario por tarefas
+
 reafzer

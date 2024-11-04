@@ -12,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
       // Define associações com outros modelos
       Tarefa.belongsTo(models.User, { foreignKey: 'responsavel_id', as: 'responsavel' });
       Tarefa.belongsTo(models.Categoria, { foreignKey: 'categoria_id', as: 'categorias' });
+      Tarefa.belongsTo(models.Metas, { foreignKey: 'metas_id', as: 'metas' });
       Tarefa.hasMany(models.Tarefa_Usuario, { foreignKey: 'tarefa_id', as: 'tarefasUsuarios' });
     }
   }
@@ -44,7 +45,14 @@ module.exports = (sequelize, DataTypes) => {
           key: 'id',
         },
       },
-      
+      metas_id: {
+        type: DataTypes.UUID,
+        allowNull: false,
+        references: {
+          model: 'Metas', // Nome da tabela referenciada
+          key: 'id',
+        },
+      },
       responsavel_id: {
         type: DataTypes.UUID,
         allowNull: false,

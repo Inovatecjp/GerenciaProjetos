@@ -1,9 +1,13 @@
 import sqlite3
 
 # Caminho dos bancos de dados
-primeiro_banco = 'S:\\projetos\\inovatec\\gerenciaProjetos\\back\\GerenciaProjetos\\sequelizeteste.sqlite'
-segundo_banco = 'S:\\projetos\\inovatec\\gerenciaProjetos\\back\\GerenciaProjetos\\sequelize.sqlite'
-nome_da_tabela = "users"  # substitua pelo nome da tabela que quer copiar
+primeiro_banco = '/home/tigaz/Documents/inovate/gerencia/GerenciaProjetos/sequelize2.sqlite'
+segundo_banco = '/home/tigaz/Documents/inovate/gerencia/GerenciaProjetos/sequelize.sqlite'
+# nome_da_tabela = "Metas"  # substitua pelo nome da tabela que quer copiar
+# nome_da_tabela = "profiles"  # substitua pelo nome da tabela que quer copiar
+# nome_da_tabela = "profile_grant"  # substitua pelo nome da tabela que quer copiar
+# nome_da_tabela = "grants"  # substitua pelo nome da tabela que quer copiar
+nome_da_tabela = "Tarefas"  # substitua pelo nome da tabela que quer copiar
 
 # Conectar ao banco de origem e obter todos os dados da tabela
 conn1 = sqlite3.connect(primeiro_banco)

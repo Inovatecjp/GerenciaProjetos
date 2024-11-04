@@ -30,6 +30,13 @@ module.exports = {
         },
         allowNull: false
       },
+      meta_id: {
+        type: Sequelize.UUIDV4,
+        references: {
+          model: 'Metas',
+          key: 'id'
+        },
+      },
       responsavel_id: {
         type: Sequelize.UUIDV4,
         references: {

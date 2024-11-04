@@ -5,12 +5,10 @@ class MetaService {
   // Listar todas as metas
   async listarMetas(data) {
     try {
-      const whereClause = data && data.projeto_id ? { projeto_id: data.projetoId } : {};
+      const whereClause = data && data.projeto_id ? { projeto_id: data.projeto_id } : {};
       return await Meta.findAll({
         where: whereClause,
-        include: [
-          { model: db.Tarefa, as: 'tarefas' }
-        ]
+
       });
     } catch (error) {
       console.error('Erro ao listar metas:', error.message);
@@ -51,7 +49,7 @@ class MetaService {
   // Criar uma nova meta
   async criarMeta(dados) {
     try {
-      if (!dados.title || !dados.describe || !dados.projeto_id) {
+      if (!dados.title || !dados.projeto_id) {
         throw new Error('Dados insuficientes para criar a meta');
       }
       return await Meta.create(dados);

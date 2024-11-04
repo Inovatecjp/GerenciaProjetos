@@ -34,7 +34,8 @@ class MetaController {
   async criarMeta(req, res) {
     try {
       const { title, describe, projeto_id } = req.body;
-      if (!title || !describe || !projeto_id) {
+      console.log(req.body)
+      if (!title || !projeto_id) {
         return res.status(400).json({ error: 'Dados insuficientes para criar a meta' });
       }
       const novaMeta = await metaService.criarMeta(req.body);

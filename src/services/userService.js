@@ -142,7 +142,26 @@ const getUser = async (id) => {
         throw(e)
     }
 }
+const getUserList = async (id) => {
+    try {
+        const user = await User.findAll({
+            where:{
+                id: {
+                    [db.Sequelize.Op.in]: id
+                }
+            }
+        })
 
+        if (!user){
+            throw new HttpError(404, "Usuário não existe")
+
+        }
+
+        return user
+    }catch (e){
+        throw(e)
+    }
+}
 const getUserWithoutPassword = async (id) => {
     try {
         const user = await User.findOne({
@@ -210,7 +229,8 @@ module.exports = {
     getUserWithoutPassword,
     updateUser,
     getEmail,
-    createUserProfileid
+    createUserProfileid,
+    getUserList
 }
 
 //

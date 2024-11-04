@@ -1,6 +1,7 @@
 const { v4: uuidv4 } = require('uuid');
 const HttpError = require("../utils/customError/httpError");
 const db = require('../sequelize/models/index');
+const { where } = require('sequelize');
 const { Projeto, Categoria, Tarefa, Comentario, Projeto_Usuario, Tarefa_Usuario, User } = db;
 
 // Funções Utilitárias
@@ -292,8 +293,32 @@ const getListCategoriesWithTasks = async (categorias) => {
 
   return categoriesWithTasks;
 };
+const getTarefasByProjeto = async (projetoId) => {
+  const categorias = await Categoria.findAll({
+    where: { projeto_id: projetoId },
+    attributes: ['id'], // Obtém apenas IDs das categorias
+    raw: true,
+  });
 
+  const categoriaIds = categorias.map(categoria => categoria.id);
 
+  const tarefas = await Tarefa.findAll({
+    where: { categoria_id: { [db.Sequelize.Op.in]: categoriaIds } },
+    attributes: ['id'], // Obtém apenas IDs das tarefas
+    raw: true,
+  });
+
+  return tarefas.map(tarefa => tarefa.id);
+};
+const getListCategoriesWithTask = async (categorias) => {
+  const categoriaIds = categorias.map((categoria) => categoria.id);
+  const tarefasIDs = await Tarefa.findAll({
+    where:{
+      categoria_id:{ [db.Sequelize.Op.in]: categoriaIds } 
+    }
+  })
+  return tarefasIDs;
+};
 // Função para compor a estrutura completa do projeto
 const getProjetoFilter = async (id) => {
   console.log('-=-=-=-=-')
@@ -332,5 +357,7 @@ module.exports = {
   getCategoryWithTasks,
   getProjetoUsuarios,
   getListCategoriesWithTasks,
-  contarOcorrenciasDeUsuarios
+  contarOcorrenciasDeUsuarios,
+  getListCategoriesWithTask,
+  getTarefasByProjeto
 };
