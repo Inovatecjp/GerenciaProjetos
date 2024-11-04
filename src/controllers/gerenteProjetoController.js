@@ -1,6 +1,7 @@
 const projetoService = require('../services/projetoService.js');
 const UserService = require('../services/userService.js');
 const db = require('../sequelize/models/index');
+const { where } = require('sequelize');
 const { Tarefa, Tarefa_Usuario, User,Categoria } = db;
 
 class GerenteProjetoController {
@@ -126,8 +127,12 @@ async getTarefaByUsuario(req, res) {
     
     const tarefasUsuarioIds = tarefasUsuario.map(tarefa => tarefa.tarefa_id);
     const tarefasComuns = tarefasDoProjeto.filter(tarefaId => tarefasUsuarioIds.includes(tarefaId));
+
+    const tarefasobj = await Tarefa.findAll({where:{
+      id: { [db.Sequelize.Op.in]: tarefasComuns}
+    }})
     
-    return res.json({ commonIds: tarefasComuns });
+    return res.json({ commonIds: tarefasobj });
   } catch (error) {
     console.error('Erro ao buscar usuários sem tarefa:', error);
     return res.status(404).json({ error: 'Erro ao buscar usuários sem tarefa.' });
