@@ -78,13 +78,13 @@ const getTarefa = async (id) => {
 // Função para atualizar uma tarefa por ID
 const updateTarefa = async (id, body) => {
   try {
-    const tarefa = await getTarefa(id);
-
     // Desestruturação para evitar a atualização de campos não permitidos
     const { id: taskId, createdAt, updatedAt, ...dataUpdate } = body;
     dataUpdate.updatedAt = new Date();
 
-    await tarefa.update(dataUpdate);
+    await Tarefa.update(dataUpdate, { where: { id } });
+
+    const tarefa = await getTarefa(id);
 
     return tarefa;
   } catch (err) {
