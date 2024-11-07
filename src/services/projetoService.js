@@ -1,24 +1,36 @@
-const { v4: uuidv4 } = require('uuid');
+const { v4: uuidv4 } = require("uuid");
 const HttpError = require("../utils/customError/httpError");
-const db = require('../sequelize/models/index');
-const { where } = require('sequelize');
-const { Projeto, Categoria, Tarefa, Comentario, Projeto_Usuario, Tarefa_Usuario, User } = db;
+const db = require("../sequelize/models/index");
+const { where } = require("sequelize");
+const {
+  Projeto,
+  Categoria,
+  Tarefa,
+  Comentario,
+  Projeto_Usuario,
+  Tarefa_Usuario,
+  User,
+} = db;
 
 // Funções Utilitárias
 const contarOcorrenciasDeUsuarios = (data) => {
   // Objeto para armazenar o contador de IDs
   const contador = {};
   // Percorre cada categoria
-  data.forEach(categoria => {
+  data.forEach((categoria) => {
     // Percorre cada tarefa dentro da categoria
-    categoria.tasks.forEach(tarefa => {
+    categoria.tasks.forEach((tarefa) => {
       // Percorre cada membro da tarefa
-      tarefa.members.forEach(member => {
+      tarefa.members.forEach((member) => {
         // Incrementa o contador para o ID do usuário
         if (contador[member.id]) {
-          contador[member.id].count++;        } 
-          else {
-          contador[member.id] = {  name: member.name, count: 1 };    
+          contador[member.id].count++;
+        } else {
+          contador[member.id] = {
+            name: member.name,
+            count: 1,
+            funcao: data.funcao,
+          };
         }
       });
     });
@@ -56,7 +68,7 @@ const getComentariosByTarefaUsuarios = async (tarefaUsuarios) => {
 const getResponsaveisByTarefa = async (tarefaId) => {
   const responsaveis = await Tarefa_Usuario.findAll({
     where: { tarefa_id: tarefaId },
-    include: [{ model: User, as: 'user' }],
+    include: [{ model: User, as: "user" }],
   });
 
   return [
@@ -98,9 +110,7 @@ const getTaskDetails = async (tarefa) => {
   };
 };
 const getTaskDetailsNotComments = async (tarefa) => {
-
   const members = await getResponsaveisByTarefa(tarefa.id);
-
 
   return {
     name: tarefa.title,
@@ -112,7 +122,7 @@ const getTaskDetailsNotComments = async (tarefa) => {
 };
 // Função para buscar tarefas detalhadas por categoria
 const getCategoryWithTasks = async (categoria) => {
-  const tarefas = await getTarefasByCategoria(categoria.id||categoria);
+  const tarefas = await getTarefasByCategoria(categoria.id || categoria);
   const tasksWithDetails = await Promise.all(
     tarefas.map((tarefa) => getTaskDetailsNotComments(tarefa))
   );
@@ -130,10 +140,10 @@ const getProjetoUsuarios = async (projetoId, all = false) => {
   // Consulta otimizada para buscar apenas os dados necessários em uma única chamada
   const projetoUsuarios = await Projeto_Usuario.findAll({
     where: { projeto_id: projetoId },
-    attributes: ['user_id'],
+    attributes: ["user_id", "funcao"],
     include: [
-      { model: User, as: 'usuario', attributes: ['name', 'id'] },
-      { model: db.Profile, as: 'profile', attributes: ['name'] }
+      { model: User, as: "usuario", attributes: ["name", "id"] },
+      { model: db.Profile, as: "profile", attributes: ["name"] },
     ],
   });
 
@@ -143,16 +153,20 @@ const getProjetoUsuarios = async (projetoId, all = false) => {
       const userInfo = {
         id: pu.user_id,
         name: pu.usuario?.name,
-        description: pu.profile?.name === 'Manager' ? undefined : pu.usuario?.descricao,
+        description:
+          pu.profile?.name === "Manager" ? undefined : pu.usuario?.descricao,
       };
-
       if (all) {
         // Se `all` for true, retorna uma lista de todos os usuários com `role`
-        acc.push({ ...userInfo, role: pu.profile?.name });
-      } else if (pu.profile?.name === 'Manager') {
-        acc.managers.push(userInfo);
+        acc.push({
+          ...userInfo,
+          role: pu.profile?.name,
+          funcao: pu.funcao,
+        });
+      } else if (pu.profile?.name === "Gerente_Projeto") {
+        acc.managers.push({ ...userInfo, funcao: pu.funcao });
       } else {
-        acc.members.push(userInfo);
+        acc.members.push({ ...userInfo, funcao: pu.funcao });
       }
 
       return acc;
@@ -182,7 +196,7 @@ const createProjeto = async (body) => {
 
     return { novoProjeto };
   } catch (err) {
-    console.error('Erro ao criar projeto:', err.message);
+    console.error("Erro ao criar projeto:", err.message);
     throw new HttpError(500, "Não foi possível criar o projeto.");
   }
 };
@@ -259,7 +273,7 @@ const getListCategoriesWithTasks = async (categorias) => {
       .reduce((acc, row) => {
         // Verificar se a tarefa já existe no acumulador
         let tarefa = acc.find((t) => t.id === row.tarefaId);
-        
+
         // Se a tarefa não existe, adicioná-la
         if (!tarefa) {
           tarefa = {
@@ -296,32 +310,32 @@ const getListCategoriesWithTasks = async (categorias) => {
 const getTarefasByProjeto = async (projetoId) => {
   const categorias = await Categoria.findAll({
     where: { projeto_id: projetoId },
-    attributes: ['id'], // Obtém apenas IDs das categorias
+    attributes: ["id"], // Obtém apenas IDs das categorias
     raw: true,
   });
 
-  const categoriaIds = categorias.map(categoria => categoria.id);
+  const categoriaIds = categorias.map((categoria) => categoria.id);
 
   const tarefas = await Tarefa.findAll({
     where: { categoria_id: { [db.Sequelize.Op.in]: categoriaIds } },
-    attributes: ['id'], // Obtém apenas IDs das tarefas
+    attributes: ["id"], // Obtém apenas IDs das tarefas
     raw: true,
   });
 
-  return tarefas.map(tarefa => tarefa.id);
+  return tarefas.map((tarefa) => tarefa.id);
 };
 const getListCategoriesWithTask = async (categorias) => {
   const categoriaIds = categorias.map((categoria) => categoria.id);
   const tarefasIDs = await Tarefa.findAll({
-    where:{
-      categoria_id:{ [db.Sequelize.Op.in]: categoriaIds } 
-    }
-  })
+    where: {
+      categoria_id: { [db.Sequelize.Op.in]: categoriaIds },
+    },
+  });
   return tarefasIDs;
 };
 // Função para compor a estrutura completa do projeto
 const getProjetoFilter = async (id) => {
-  console.log('-=-=-=-=-')
+  console.log("-=-=-=-=-");
   const projeto = await getProjeto(id);
   const categorias = await getCategoriasByProjeto(id);
 
@@ -359,5 +373,5 @@ module.exports = {
   getListCategoriesWithTasks,
   contarOcorrenciasDeUsuarios,
   getListCategoriesWithTask,
-  getTarefasByProjeto
+  getTarefasByProjeto,
 };
