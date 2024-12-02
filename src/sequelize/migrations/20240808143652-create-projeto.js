@@ -1,59 +1,57 @@
-'use strict';
-const { DataTypes } = require('sequelize');
+"use strict";
+const { DataTypes } = require("sequelize");
 
 const STATUS = {
-  nao_iniciado: 1,
-  em_andamento: 2,
-  finalizado: 3,
-  paralisado: 4,
-  cancelado: 5
-}
-
+  nao_iniciado: "nao_iniciado",
+  em_andamento: "em_andamento",
+  finalizado: "finalizado",
+  paralisado: "paralisado",
+  cancelado: "cancelado",
+};
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Projetos', {
+    await queryInterface.createTable("Projetos", {
       id: {
-        type: Sequelize.UUIDV4,
+        type: Sequelize.UUID,
         allowNull: false,
         primaryKey: true,
-        defaultValue: DataTypes.UUIDV4
+        defaultValue: DataTypes.UUIDV4,
       },
       name: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       descricao: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       orcamento: {
-        type: Sequelize.NUMBER
+        type: Sequelize.FLOAT,
       },
       data_inicio: {
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       data_fim: {
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       status: {
         type: Sequelize.ENUM,
-        values: Object.values(STATUS)
+        values: Object.values(STATUS),
       },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
-        defaultValue: new Date()
-
+        defaultValue: new Date(),
       },
       updatedAt: {
         allowNull: false,
         type: Sequelize.DATE,
-        defaultValue: new Date()
-
-      }
+        defaultValue: new Date(),
+      },
     });
   },
+
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Projetos');
-  }
+    await queryInterface.dropTable("Projetos");
+  },
 };

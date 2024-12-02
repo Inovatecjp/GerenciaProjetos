@@ -1,43 +1,43 @@
-'use strict';
+"use strict";
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Tarefa_Usuario', {
+    await queryInterface.createTable("Tarefa_Usuario", {
       id: {
         defaultValue: Sequelize.UUIDV4,
         allowNull: false,
         primaryKey: true,
-        type: Sequelize.UUIDV4
+        type: Sequelize.UUID,
       },
       user_id: {
-        type: Sequelize.UUIDV4,
-        references:{
-          model: 'users',
-          key: 'id'
+        type: Sequelize.UUID,
+        references: {
+          model: "users",
+          key: "id",
         },
-        allowNull: false
+        allowNull: false,
       },
       tarefa_id: {
-        type: Sequelize.UUIDV4,
+        type: Sequelize.UUID,
         references: {
-          model: 'Tarefas',
-          key: 'id'
+          model: "Tarefas",
+          key: "id",
         },
-        allowNull: false
+        allowNull: false,
       },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
-        defaultValue: new Date()
+        defaultValue: new Date(),
       },
       updatedAt: {
         allowNull: false,
         type: Sequelize.DATE,
-        defaultValue: new Date()
-      }
+        defaultValue: new Date(),
+      },
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Tarefa_Usuario');
-  }
+    await queryInterface.dropTable("Tarefa_Usuario");
+  },
 };

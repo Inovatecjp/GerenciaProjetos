@@ -1,16 +1,16 @@
-'use strict';
+"use strict";
 
-const { DataTypes } = require('sequelize');
+const { DataTypes } = require("sequelize");
 
 const STATUS = {
-  contratado: 1,
-  desativado: 2,
+  contratado: "contratado",
+  desativado: "desativado",
 };
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Projeto_Usuario', {
+    await queryInterface.createTable("Projeto_Usuario", {
       id: {
         defaultValue: DataTypes.UUIDV4,
         allowNull: false,
@@ -41,24 +41,24 @@ module.exports = {
       projeto_id: {
         type: Sequelize.UUID,
         references: {
-          model: 'Projetos',
-          key: 'id',
+          model: "Projetos",
+          key: "id",
         },
         allowNull: false,
       },
       user_id: {
         type: Sequelize.UUID,
         references: {
-          model: 'users',
-          key: 'id',
+          model: "users",
+          key: "id",
         },
         allowNull: false,
       },
       profile_id: {
         type: Sequelize.UUID,
         references: {
-          model: 'profiles',
-          key: 'id',
+          model: "profiles",
+          key: "id",
         },
         allowNull: false,
       },
@@ -75,6 +75,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Projeto_Usuario');
+    await queryInterface.dropTable("Projeto_Usuario");
   },
 };

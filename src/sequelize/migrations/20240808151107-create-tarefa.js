@@ -1,63 +1,62 @@
-'use strict';
+"use strict";
 
-const { DataTypes } = require('sequelize');
-
+const { DataTypes } = require("sequelize");
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Tarefas', {
+    await queryInterface.createTable("Tarefas", {
       id: {
         defaultValue: DataTypes.UUIDV4,
         allowNull: false,
         primaryKey: true,
-        type: Sequelize.UUIDV4
+        type: Sequelize.UUID,
       },
       title: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       descricao: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       data_fim: {
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       categoria_id: {
-        type: Sequelize.UUIDV4,
+        type: Sequelize.UUID,
         references: {
-          model: 'Categorias',
-          key: 'id'
+          model: "Categorias",
+          key: "id",
         },
-        allowNull: false
+        allowNull: false,
       },
       meta_id: {
-        type: Sequelize.UUIDV4,
+        type: Sequelize.UUID,
         references: {
-          model: 'Metas',
-          key: 'id'
+          model: "Metas",
+          key: "id",
         },
       },
       responsavel_id: {
-        type: Sequelize.UUIDV4,
+        type: Sequelize.UUID,
         references: {
-          model: 'users',
-          key: 'id'
+          model: "users",
+          key: "id",
         },
-        allowNull: false
+        allowNull: false,
       },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
-        defaultValue: new Date()
+        defaultValue: new Date(),
       },
       updatedAt: {
         allowNull: false,
         type: Sequelize.DATE,
-        defaultValue: new Date()
-      }
+        defaultValue: new Date(),
+      },
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Tarefas');
-  }
+    await queryInterface.dropTable("Tarefas");
+  },
 };

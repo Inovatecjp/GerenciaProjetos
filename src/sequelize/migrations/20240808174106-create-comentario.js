@@ -1,34 +1,34 @@
-'use strict';
+"use strict";
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('comentarios', {
+    await queryInterface.createTable("comentarios", {
       id: {
         defaultValue: Sequelize.UUIDV4,
         allowNull: false,
         primaryKey: true,
-        type: Sequelize.UUIDV4
+        type: Sequelize.UUID,
       },
       texto: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       tarefa_user_id: {
         type: Sequelize.DataTypes.UUID,
-        references: { model: 'Tarefa_Usuario', key: 'id' }
+        references: { model: "Tarefa_Usuario", key: "id" },
       },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
-        defaultValue: new Date()
+        defaultValue: new Date(),
       },
       updatedAt: {
         allowNull: false,
         type: Sequelize.DATE,
-        defaultValue: new Date()
-      }
+        defaultValue: new Date(),
+      },
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('comentarios');
-  }
+    await queryInterface.dropTable("comentarios");
+  },
 };
