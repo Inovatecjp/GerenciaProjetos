@@ -38,7 +38,7 @@ class profileController {
         { method: 'POST', route: '/perfilprojeto', description: 'Deletat user' },
 
         { method: 'GET', route: '/users/me', description: 'acesso as infos do proprio user' },
-        { method: 'GET', route: '/users/me/projetos', description: 'acesso as infos do proprio user' },
+        { method: 'GET', route: '/users/me/projetos/', description: 'acesso as infos do proprio user' },
         { method: 'GET', route: '/users/me/profile', description: 'acesso as infos do proprio user' },
         { method: 'PUT', route: '/users/me', description: 'atulaizar as infos do proprio user' },
         { method: 'DELETE', route: '/users/me', description: 'deletar o proprio user' },
