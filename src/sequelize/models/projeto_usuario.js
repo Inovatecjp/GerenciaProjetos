@@ -2,10 +2,9 @@
 const { Model } = require('sequelize');
 
 const STATUS = {
-  contratado: 1,
-  desativado: 2,
+  contratado: "contratado",
+  desativado: "desativado",
 };
-
 module.exports = (sequelize, DataTypes) => {
   class Projeto_Usuario extends Model {
     static associate(models) {

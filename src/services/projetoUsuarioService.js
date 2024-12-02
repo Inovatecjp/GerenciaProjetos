@@ -7,7 +7,21 @@ const Projeto = db.Projeto;
 const assignUserToProject = async (data) => {
   try {
     console.log(data)
-    const newAssignment = await ProjetoUsuario.create({...data});
+    const newAssignment = await ProjetoUsuario.create({
+      funcao: data.funcao,
+      descricao: data.descricao,
+      salario: data.salario,
+      data_inicio: data.data_inicio,
+      data_fim: data.data_fim,
+      status: data.status,
+      profile_id: data.profile_id,
+      id_user: data.id_user,
+      projeto_id: data.projeto_id,
+      user_id: data.user_id,
+      id: data.id
+    }, {
+      returning: ['id', 'funcao', 'data_inicio', 'data_fim', 'status', 'salario', 'projeto_id', 'user_id', 'profile_id']  // Exclua 'UserId'
+    });
     return newAssignment;
   } catch (error) {
     console.log(error)
