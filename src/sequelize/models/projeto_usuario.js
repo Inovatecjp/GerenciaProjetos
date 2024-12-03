@@ -3,6 +3,7 @@ const { Model } = require('sequelize');
 
 const STATUS = {
   contratado: "contratado",
+  nao_iniciado: "nao_iniciado",
   desativado: "desativado",
 };
 module.exports = (sequelize, DataTypes) => {
