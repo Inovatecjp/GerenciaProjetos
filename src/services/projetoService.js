@@ -253,10 +253,10 @@ const getListCategoriesWithTasks = async (categorias) => {
       T.data_fim AS tarefaDataFim,
       U.id AS userId,
       U.name AS userName
-    FROM Categorias AS C
-    LEFT JOIN Tarefas AS T ON C.id = T.categoria_id
-    LEFT JOIN Tarefa_Usuario AS TU ON T.id = TU.tarefa_id
-    LEFT JOIN Users AS U ON TU.user_id = U.id
+    FROM public."Categorias" AS C
+	  LEFT JOIN public."Tarefas" AS T ON C.id = T.categoria_id
+    LEFT JOIN public."Tarefa_Usuario" AS TU ON T.id = TU.tarefa_id
+  	LEFT JOIN public."Users" AS U ON TU.user_id = U.id
     WHERE C.id IN (:categoriaIds)
   `;
 
