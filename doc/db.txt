@@ -1,0 +1,62 @@
+Estrutura do Banco de Dados
+1. Tabelas Principais
+
+    Usuarios
+        usuario_id: Chave primária, inteiro, autoincremento.
+        nome: Texto.
+        email: Texto, único.
+        senha: Texto.
+        data_criacao: Data/hora.
+
+    Projetos
+        projeto_id: Chave primária, inteiro, autoincremento.
+        nome_projeto: Texto.
+        descricao: Texto.
+        data_inicio: Data.
+        data_fim: Data.
+        usuario_id: Chave estrangeira referenciando Usuarios.
+
+    Quadros
+        quadro_id: Chave primária, inteiro, autoincremento.
+        nome_quadro: Texto.
+        projeto_id: Chave estrangeira referenciando Projetos.
+
+    Listas
+        lista_id: Chave primária, inteiro, autoincremento.
+        nome_lista: Texto.
+        quadro_id: Chave estrangeira referenciando Quadros.
+        posicao: Inteiro.
+
+    Cartoes
+        cartao_id: Chave primária, inteiro, autoincremento.
+        titulo: Texto.
+        descricao: Texto.
+        lista_id: Chave estrangeira referenciando Listas.
+        prioridade: Texto.
+        data_criacao: Data/hora.
+        data_conclusao: Data/hora.
+
+    TarefaMeta
+        tarefa_id: Chave primária, inteiro, autoincremento.
+        cartao_id: Chave estrangeira referenciando Cartoes.
+        descricao: Texto.
+        concluida: Booleano.
+        data_conclusao: Data/hora, opcional.
+
+    MembrosProjeto
+        projeto_id: Chave estrangeira referenciando Projetos.
+        usuario_id: Chave estrangeira referenciando Usuarios.
+        role: Texto.
+
+2. Relacionamentos
+
+    Relacionamento entre Projeto e Usuário: Cada projeto pode ser criado por um usuário, enquanto um usuário pode criar ou pertencer a vários projetos.
+    Relacionamento entre Quadro e Projeto: Cada quadro pertence a um projeto específico.
+    Relacionamento entre Lista e Quadro: Cada lista está associada a um quadro específico, permitindo múltiplas listas por quadro.
+    Relacionamento entre Cartão e Lista: Cada cartão é colocado em uma lista, e listas contêm múltiplos cartões.
+    Relacionamento entre TarefaMeta e Cartão: Cada tarefa ou meta está associada a um cartão específico.
+
+3. Considerações de Performance e Segurança
+
+    Índices: Adicionar índices em colunas frequentemente pesquisadas, como usuario_id, projeto_id, e quadro_id, para melhorar a performance das consultas.
+    Segurança: Armazenar senhas usando hash seguro e considerar medidas de segurança como SSL para proteger os dados durante a transmissão.

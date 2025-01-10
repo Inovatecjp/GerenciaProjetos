@@ -1,0 +1,32 @@
+Requisitos Funcionais
+
+listas - colunas
+cartões - tarefas
+quadros - projetos
+
+
+Estes são requisitos que descrevem o que o sistema deve fazer:
+
+    Criação de Quadros, Listas e Cartões:
+        Permitir a criação, edição e exclusão de quadros.
+        Permitir a criação, edição e exclusão de listas dentro dos quadros.
+        Permitir a criação, edição e exclusão de cartões dentro das listas.
+
+    Gestão de Metas:
+        Possibilitar a definição de metas específicas para cada projeto.
+        Associar cada meta a um cartão específico.
+        Permitir a definição de prazos e responsáveis por cada meta.
+
+    Monitoramento e Atualização de Progresso:
+        Permitir a atualização manual da porcentagem de conclusão em cada cartão.
+        Atualizar automaticamente a porcentagem global de conclusão do projeto baseada no progresso dos cartões.
+
+    Notificações e Alertas:
+        Enviar notificações para os usuários sobre atualizações importantes, prazos e mudanças de status.
+
+    Integrações:
+        Integrar com calendários, ferramentas de comunicação, e APIs externas para automação de tarefas.
+
+    Relatórios:
+        Gerar relatórios automáticos sobre o progresso do projeto.
+        Permitir visualização de dashboards de progresso.
